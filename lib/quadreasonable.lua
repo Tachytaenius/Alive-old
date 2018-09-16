@@ -47,7 +47,6 @@ function quadreasonable.getQuad(spriteX, spriteY, spriteWidth, spriteHeight, spr
 		local sheetWidth = spriteCountX * spriteWidth + (spriteCountX + 1) * padding
 		local sheetHeight = spriteCountY * spriteWidth + (spriteCountY + 1) * padding
 		current[padding] = newQuad(x, y, spriteWidth, spriteHeight, sheetWidth, sheetHeight)
-		print(x, y, spriteWidth, spriteHeight, sheetWidth, sheetHeight)
 	end
 	return current[padding]
 end

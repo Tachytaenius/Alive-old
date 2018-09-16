@@ -46,8 +46,8 @@ local function initialisePlay(seed, recordName, loadedFrom)
 	lastInputs = {{}} -- One per player.
 	viewport = {love.graphics.newCanvas(constants.viewportWidth, constants.viewportHeight), stencil = true}
 	
-	local width = 25 -- In tiles, not in pixels. If it were in pixels that value would be multiplied by constants.terrainScale.
-	local height = 25
+	local width = 200 -- In tiles, not in pixels. If it were in pixels that value would be multiplied by constants.terrainScale.
+	local height = 200
 	
 	dims = {}
 	
@@ -107,21 +107,26 @@ local function tickPlay(...)
 		local collisionsFunction = collider.collisions
 		
 		-- tiles
+		local tiles = {}
+		for entitiy in pairs(dimension.entities) do
+			for shape in pairs(collisionsFunction(collider, entity.solidShape)) do
+				if shape.tile then
+					tiles[shape] = true
+				end
+			end
+		end
+		
 		local collisions = {}
-		-- TODO: optimise
-		for x = 0, dimension.width - 1 do
-			for y = 0, dimension.height - 1 do
-				local shape = dimension.tiles[x][y]
-				local type = shape.collisionType
-				if type == window or type == wall then
-					for other, vector in pairs(dimension.collider:collisions(shape)) do
-						local entity = other.entity
-						if entity then
-							other:move(-vector.x, -vector.y)
-							local x, y = other:center()
-							local _, _, theta = entity:getSpatials()
-							entity:setSpatials(x, y, theta)
-						end
+		for shape in pairs(tiles) do
+			local type = shape.collisionType
+			if type == window or type == wall then
+				for other, vector in pairs(dimension.collider:collisions(shape)) do
+					local entity = other.entity
+					if entity then
+						other:move(-vector.x, -vector.y)
+						local x, y = other:center()
+						local _, _, theta = entity:getSpatials()
+						entity:setSpatials(x, y, theta)
 					end
 				end
 			end

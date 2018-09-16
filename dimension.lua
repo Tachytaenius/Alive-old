@@ -49,7 +49,6 @@ local tri, tau = math.tri, math.tau
 function Dimension:getLightLevel()
 	local sunLight = (tri(self.time / self.dayLength * tau - tau/4)+1)/2
 	if twilightEtc then sunLight = sunLight * 0.75 + 0.125 end
-	sunLight = 0 -- tmp
 	return sunLight, sunLight, sunLight
 end
 
@@ -61,7 +60,6 @@ function Dimension:newPlayer(rng, gender, who, x, y, theta, relativeTo)
 		player = classes.malePlayer(who, self, {x, y, theta, relativeTo}, nil)
 	end
 	table.insert(self.entities, player)
-	table.insert(self.entities, classes.lamp(self, {x, y}, 100, 100, 150, 1, 1, 1))
 	return player
 end
 

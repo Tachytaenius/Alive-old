@@ -9,6 +9,7 @@ local lightInfoCanvas = love.graphics.newCanvas(w, h)
 local lightCanvas = love.graphics.newCanvas(w, h)
 local viewCanvas = love.graphics.newCanvas(w, h)
 local textureShader = love.graphics.newShader("shaders/texture.glsl")
+local fragmentFalloffShader = love.graphics.newShader("shaders/falloff.glsl")
 local lightShader = love.graphics.newShader("shaders/light.glsl")
 
 local crosshairs = love.graphics.newImage("assets/images/misc/crosshairs.png")
@@ -21,7 +22,7 @@ function Animal:initialize(player, dimension, spatials, stats, status, spriteshe
 	if not player then -- NOTE: If "player" status is removed, aiInfo must be created. Whenever a player number is given aiInfo must be removed.
 		self.aiInfo = {} -- What it's chasing, where it wants to be et cetera. Longer-term goals than actions.
 	end
-	self.endurance, self.strength, self.speed, self.agility, self.immunity, self.fov, self.falloff = stats.endurance or 8, stats.strength or 8, stats.speed or 2, stats.agility or 8, stats.immunity or 8, stats.fov or tau / 3.4, stats.falloff or 576
+	self.endurance, self.strength, self.speed, self.agility, self.immunity, self.fov, self.falloff = stats.endurance or 8, stats.strength or 8, stats.speed or 2, stats.agility or 8, stats.immunity or 8, stats.fov or tau / 3.4, stats.falloff or 384
 	self.hunger, self.damage, self.tiredness, self.manna, self.confusion, self.poison, self.flying, self.sleep, self.dead, self.noClip = status.hunger or 0, status.damage or 0, status.tiredness or 0, status.manna or 0, status.confusion or 0, status.poison or 0, status.flying or false, status.sleep or 0, status.dead or false, status.noClip or false
 	self:generateViewShapes()
 end
@@ -121,7 +122,6 @@ function Animal:control(key, inputs, deltaInputs)
 	if inputs.strafeRight and not inputs.strafeLeft then self.actions.x = -speed end
 	if inputs.strafeLeft and not inputs.strafeRight then self.actions.x = speed end
 	
-	if inputs.use then self.actions.dig = true end
 	if deltaInputs.act then self.actions.toggleOutfit = true end
 end
 
@@ -235,12 +235,6 @@ function Animal:tick(random)
 	local xTile = floor(x / constants.terrainScale)
 	local yTile = floor(y / constants.terrainScale)
 	
-	if actions.dig then
-		local tile = dimension.tiles[floor(reachX / scale)][floor(reachY / scale)]
-		tile.collisionType = wall
-		local r, g, b = 0, 0, 0
-		tile.r, tile.g, tile.b = r, g, b
-	end
 	if actions.toggleOutfit and self.toggleableOutfit then self.toggledOutfit = not self.toggledOutfit end
 	self:generateViewShapes()
 end
@@ -292,7 +286,7 @@ function Animal:see(viewportCanvasSetter)
 	love.graphics.setCanvas(lightInfoCanvas)
 	love.graphics.clear(1, 1, 1, 1)
 	for tile in pairs(occludingTiles) do
-		colour(tile.r, tile.g, tile.b, 1)
+		colour(0, 0, 0, 1)
 		local drawX, drawY = self.x - tile.x * scale - scale, self.y - tile.y * scale - scale
 		love.graphics.rectangle("fill", drawX, drawY, scale, scale)
 	end
@@ -304,6 +298,7 @@ function Animal:see(viewportCanvasSetter)
 	local r, g, b = self.dimension:getLightLevel()
 	love.graphics.clear(r, g, b, 1)
 	vec[3], vec[4] = tau, 0
+	lightShader:send("use_falloff", true)
 	for light in pairs(lights) do
 		local x, y = light:center()
 		x, y = selfX - x, selfY - y
@@ -313,7 +308,7 @@ function Animal:see(viewportCanvasSetter)
 		local energy = light.energy
 		love.graphics.draw(null, x - energy, y - energy, 0, energy * 2, energy * 2)
 	end
-	
+	lightShader:send("use_falloff", false)
 	love.graphics.setCanvas(viewCanvas)
 	love.graphics.clear(0, 0, 0, 1)
 	love.graphics.setColor(1, 1, 1, 1) -- red mist for angry vision is plausible
@@ -323,24 +318,54 @@ function Animal:see(viewportCanvasSetter)
 	-- love.graphics.setColor(1, 1, 1, 1) -- if we do use red mist or LSD colour transitions etc
 	love.graphics.setShader()
 	love.graphics.circle("fill", 0, 0, self.senseRadius)
+	love.graphics.setBlendMode("alpha")
 	love.graphics.origin()
 	love.graphics.translate(VPaddX, VPaddY)
 	love.graphics.rotate(-selfTheta)
-	love.graphics.setShader(textureShader)	
-	textureShader:send("use_noise", true)
+	love.graphics.setShader()
 	love.graphics.setCanvas(viewportCanvasSetter)
+	love.graphics.setShader(textureShader)
+	
 	love.graphics.clear(0, 0, 0, 1)
+	vec[1], vec[2], vec[3], vec[4] = VPaddX, VPaddY, constants.falloffStart, gfxLog(constants.targetRadius / constants.falloffStart) / gfxLog(self.falloff / constants.falloffStart)
+	textureShader:send("info", vec)
+	textureShader:send("use_noise", true)
 	for tile in pairs(tiles) do
 		tile:draw(textureShader, selfX, selfY)
 	end
-	love.graphics.setBlendMode("multiply", "premultiplied")
+	textureShader:send("use_noise", false)
+	colour(1, 1, 1, 1)
+	love.graphics.rotate(selfTheta)
+	for entity in pairs(underEntities) do
+		local entity = entity.entity
+		if entity.getQuad and entity ~= self then
+			local screenX, screenY, angle = self:lookAt(entity)
+			local quad = entity:getQuad(angle)
+			love.graphics.draw(entity.spritesheet, quad, screenX, screenY)
+		end
+	end
+	for entity in pairs(entities) do
+		local entity = entity.entity
+		if entity.getQuad and entity ~= self then
+			local screenX, screenY, angle = self:lookAt(entity)
+			local quad = entity:getQuad(angle)
+			love.graphics.draw(entity.spritesheet, quad, screenX, screenY)
+		end
+	end
+	love.graphics.draw(self.spritesheet, self:getQuad(constants.up), -self.spriteRadius, -self.spriteRadius)
+	if self.reachX and self.reachY then
+		love.graphics.draw(crosshairs, -crosshairsWidth / 2, -self.reach - crosshairsHeight / 2) -- TODO: For any reachX, reachY
+	end
 	love.graphics.origin()
-	love.graphics.setShader()
+	love.graphics.setShader(fragmentFalloffShader)
+	vec[1], vec[2] = LaddX, LaddY
+	fragmentFalloffShader:send("info", vec)
 	love.graphics.setColor(1, 1, 1, 1)
+	love.graphics.setBlendMode("multiply", "premultiplied")
 	love.graphics.draw(lightCanvas, VPaddX, VPaddY, -selfTheta, 1, 1, LaddX, LaddY)
-	love.graphics.draw(viewCanvas, VPaddX, VPaddY, -selfTheta, 1, 1, LaddX, LaddY) -- TODO: after entities
+	love.graphics.draw(viewCanvas, VPaddX, VPaddY, -selfTheta, 1, 1, LaddX, LaddY)
 	love.graphics.setBlendMode("alpha", "alphamultiply")
-	love.graphics.setCanvas()
+	love.graphics.setShader()
 end
 
 return Animal
