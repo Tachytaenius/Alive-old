@@ -61,7 +61,7 @@ function Dimension:newPlayer(rng, gender, who, x, y, theta, relativeTo)
 		player = classes.malePlayer(who, self, {x, y, theta, relativeTo}, nil)
 	end
 	table.insert(self.entities, player)
-	table.insert(self.entities, classes.lamp(self, {x, y}, 100, 100, 80, 1, 1, 1))
+	table.insert(self.entities, classes.lamp(self, {x, y}, 100, 100, 150, 1, 1, 1))
 	return player
 end
 

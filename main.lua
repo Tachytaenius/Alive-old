@@ -93,8 +93,7 @@ local function tickPlay(...)
 			if entity.tick and not entity.new then
 				local containedBy = entity.containedBy
 				local result
-				local random = rand(rng, 1)
-				if containedBy then result = containedBy:tickContainedEntity(entity, random) else result = entity:tick(random) end
+				if containedBy then result = containedBy:tickContainedEntity(entity, rng) else result = entity:tick(rng) end
 				dimensionChanges[dimensionID][entityID] = result
 			end
 			if entity.new then entity.new = false

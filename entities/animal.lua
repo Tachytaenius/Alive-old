@@ -7,10 +7,10 @@ local round = math.round
 local w, h = 1024, 1024 -- tmp
 local lightInfoCanvas = love.graphics.newCanvas(w, h)
 local lightCanvas = love.graphics.newCanvas(w, h)
-
+local viewCanvas = love.graphics.newCanvas(w, h)
 local textureShader = love.graphics.newShader("shaders/texture.glsl")
 local lightShader = love.graphics.newShader("shaders/light.glsl")
- 
+
 local crosshairs = love.graphics.newImage("assets/images/misc/crosshairs.png")
 local crosshairsWidth, crosshairsHeight = crosshairs:getDimensions()
 
@@ -131,9 +131,16 @@ function Animal:getSeenShapes()
 	local seenCircle = collider:collisions(self.viewCircle)
 	local tiles, entities, underEntities, lights = {}, {}, {}, {}
 	
+	local occluders = {} -- you might not be able to see them directly but their shadows are relevant
+	
 	for k in pairs(seenSector) do
 		if k.tile then
 			tiles[k] = true
+			
+			if k.tile and k.collisionType == wall then
+				occluders[k] = true
+			end
+			
 			seenCircle[k] = nil
 		elseif k.entity then
 			if k.entity.floor then
@@ -151,6 +158,9 @@ function Animal:getSeenShapes()
 	for k in pairs(seenCircle) do
 		if k.tile then
 			tiles[k] = true
+			if k.tile and k.collisionType == wall then
+				occluders[k] = true
+			end
 		elseif k.entity then
 			if k.entity.floor then
 				underEntities[k] = true
@@ -162,7 +172,6 @@ function Animal:getSeenShapes()
 		end
 	end
 	
-	local occluders = {}
 	for light in pairs(lights) do
 		local newOccluders = collider:collisions(light)
 		for occluder in pairs(newOccluders) do
@@ -227,7 +236,10 @@ function Animal:tick(random)
 	local yTile = floor(y / constants.terrainScale)
 	
 	if actions.dig then
-		dimension.tiles[floor(reachX / scale)][floor(reachY / scale)].collisionType = wall
+		local tile = dimension.tiles[floor(reachX / scale)][floor(reachY / scale)]
+		tile.collisionType = wall
+		local r, g, b = 0, 0, 0
+		tile.r, tile.g, tile.b = r, g, b
 	end
 	if actions.toggleOutfit and self.toggleableOutfit then self.toggledOutfit = not self.toggledOutfit end
 	self:generateViewShapes()
@@ -280,7 +292,7 @@ function Animal:see(viewportCanvasSetter)
 	love.graphics.setCanvas(lightInfoCanvas)
 	love.graphics.clear(1, 1, 1, 1)
 	for tile in pairs(occludingTiles) do
-		colour(0, 0, 0, 1)
+		colour(tile.r, tile.g, tile.b, 1)
 		local drawX, drawY = self.x - tile.x * scale - scale, self.y - tile.y * scale - scale
 		love.graphics.rectangle("fill", drawX, drawY, scale, scale)
 	end
@@ -291,18 +303,26 @@ function Animal:see(viewportCanvasSetter)
 	love.graphics.setCanvas(lightCanvas)
 	local r, g, b = self.dimension:getLightLevel()
 	love.graphics.clear(r, g, b, 1)
+	vec[3], vec[4] = tau, 0
 	for light in pairs(lights) do
 		local x, y = light:center()
 		x, y = selfX - x, selfY - y
 		colour(light.r, light.g, light.b, 1)
-		vec[1], vec[2] = x, y
-		lightShader:send("drawpos", vec)
+		vec[1], vec[2] = x + LaddX, y + LaddY
+		lightShader:send("info", vec)
 		local energy = light.energy
 		love.graphics.draw(null, x - energy, y - energy, 0, energy * 2, energy * 2)
 	end
-	love.graphics.setColor(1, 1, 1, 1)
 	
+	love.graphics.setCanvas(viewCanvas)
+	love.graphics.clear(0, 0, 0, 1)
+	love.graphics.setColor(1, 1, 1, 1) -- red mist for angry vision is plausible
+	vec[1], vec[2], vec[3], vec[4] = LaddX, LaddY, self.fov, selfTheta
+	lightShader:send("info", vec)
+	love.graphics.draw(null, -falloff, -falloff, 0, falloff * 2)
+	-- love.graphics.setColor(1, 1, 1, 1) -- if we do use red mist or LSD colour transitions etc
 	love.graphics.setShader()
+	love.graphics.circle("fill", 0, 0, self.senseRadius)
 	love.graphics.origin()
 	love.graphics.translate(VPaddX, VPaddY)
 	love.graphics.rotate(-selfTheta)
@@ -318,6 +338,7 @@ function Animal:see(viewportCanvasSetter)
 	love.graphics.setShader()
 	love.graphics.setColor(1, 1, 1, 1)
 	love.graphics.draw(lightCanvas, VPaddX, VPaddY, -selfTheta, 1, 1, LaddX, LaddY)
+	love.graphics.draw(viewCanvas, VPaddX, VPaddY, -selfTheta, 1, 1, LaddX, LaddY) -- TODO: after entities
 	love.graphics.setBlendMode("alpha", "alphamultiply")
 	love.graphics.setCanvas()
 end
