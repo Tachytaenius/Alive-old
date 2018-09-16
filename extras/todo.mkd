@@ -1,0 +1,11 @@
+* Give a message at the beginning reassuring users with sane, IEEE-754-compliant machines.
+* Make the session recording system.
+	* If there's text, don't record the player's "progress" through the text. Let the replayer pause and see it themselves...?
+* Make a no-building-but-yes-moving-around zone around the world map at least as big as the biggest entity. Make it really slow to move in or something so that people aren't tempted to travel in it. Or maybe just scrap the idea.
+* Figure out my Lua conventions
+* Make the entity spatials getter and create proper absolute setters too
+	* Watch out, I think reach will break.
+* Make a standard entitiy ticking function
+* Make shadows using a normal map
+* Optimise draw with... batching?
+* Point shapes for pickables.

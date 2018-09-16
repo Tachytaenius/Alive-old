@@ -1,0 +1,29 @@
+{
+	"info": {
+		"showPerformance": false,
+	},
+	"controls": {
+		"w": "forwards",
+		"a": "strafeLeft",
+		"s": "backwards",
+		"d": "strafeRight",
+		",": "turnLeft",
+		".": "turnRight",
+		"space": "use",
+		"lshift": "run",
+		"lalt": "duck",
+		"lctrl": "sneak",
+		"tab": "act",
+
+		"escape": "pause",
+		"f2": "screenshot",
+		"f3": "toggleInfo",
+		"f9": "scaleDown",
+		"f10": "scaleUp",
+		"f11": "toggleFullscreen",
+	},
+	"graphics": {
+		"fullscreen": false,
+		"scale": 2,
+	}	
+}
