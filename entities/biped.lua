@@ -45,8 +45,8 @@ function Biped:grabAtCrosshairs()
 	-- TODO
 end
 
-function Biped:tick(world, random)
-	Animal.tick(self, world, random)
+function Biped:tick(random)
+	Animal.tick(self, random)
 	
 	self.blink = (self.blink + 1) % Biped.BLINK_SPEED
 	

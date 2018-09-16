@@ -77,7 +77,7 @@ local function tickPlay(...)
 			else
 				local think = entity.think
 				if think then
-					think(entity, entityKey, rand(rng, 1))
+					think(entity, entityKey, rng)
 				end
 			end
 		end
@@ -195,7 +195,7 @@ local function tickPlay(...)
 	for _, dimension in ipairs(dims) do
 		dimension.time = (dimension.time + 1) % dimension.dayLength
 		for _, entity in ipairs(dimension.entities) do
-			if entity.checkDie then entity:checkDie(rand(rng, 1)) end
+			if entity.checkDie then entity:checkDie(rng) end
 		end
 	end
 	

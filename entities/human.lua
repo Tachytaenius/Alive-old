@@ -21,8 +21,8 @@ function Human:initialize(player, dimension, spatials, stats, status)
 	end
 end
 
-function Human:tick(world, random)
-	Biped.tick(self, world, random)
+function Human:tick(random)
+	Biped.tick(self, random)
 	
 	if self.gender == "male" then
 		self.beard = math.min(self.beard + 1, Human.MAX_BEARD)

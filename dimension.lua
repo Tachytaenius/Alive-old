@@ -60,6 +60,7 @@ function Dimension:newPlayer(rng, gender, who, x, y, theta, relativeTo)
 		player = classes.malePlayer(who, self, {x, y, theta, relativeTo}, nil)
 	end
 	table.insert(self.entities, player)
+	table.insert(self.entities, classes.ghostMaiden(nil, self, {x, y, theta, relativeTo}))
 	return player
 end
 
