@@ -131,7 +131,7 @@ function Animal:getSeenShapes()
 	local collider = self.dimension.collider
 	local seenSector = collider:collisions(self.viewSector)
 	local seenCircle = collider:collisions(self.viewCircle)
-	local tiles, entities, underEntities, lights = {}, {}, {}, {}
+	local tiles, entities, lights = {}, {}, {}
 	
 	local occluders = {} -- you might not be able to see them directly but their shadows are relevant
 	
@@ -145,11 +145,7 @@ function Animal:getSeenShapes()
 			
 			seenCircle[k] = nil
 		elseif k.entity then
-			if k.entity.floor then
-				underEntities[k] = true
-			else
-				entities[k] = true
-			end
+			entities[k] = true
 			seenCircle[k] = nil
 		elseif k.light then
 			lights[k] = true
@@ -164,11 +160,7 @@ function Animal:getSeenShapes()
 				occluders[k] = true
 			end
 		elseif k.entity then
-			if k.entity.floor then
-				underEntities[k] = true
-			else
-				entities[k] = true
-			end
+			entities[k] = true
 		elseif k.light then
 			lights[k] = true
 		end
@@ -183,7 +175,7 @@ function Animal:getSeenShapes()
 		end
 	end
 	
-	return tiles, entities, underEntities, lights, occluders
+	return tiles, entities, lights, occluders
 end
 
 function Animal:canSeeEntity(entity)
@@ -282,7 +274,7 @@ function Animal:see(viewportCanvasSetter)
 	local VPaddX = constants.viewportWidth / 2
 	local VPaddY = constants.viewportHeight - self.spriteRadius * 2
 	local falloff = self.falloff
-	local tiles, entities, underEntities, lights, occludingTiles = self:getSeenShapes()
+	local tiles, entities, lights, occludingTiles = self:getSeenShapes()
 	
 	love.graphics.translate(LaddX, LaddY)
 	love.graphics.setCanvas(lightInfoCanvas)
@@ -338,21 +330,25 @@ function Animal:see(viewportCanvasSetter)
 	textureShader:send("use_noise", false)
 	colour(1, 1, 1, 1)
 	love.graphics.rotate(selfTheta)
-	for entity in pairs(underEntities) do
+	local over = {}
+	for entity in pairs(entities) do
+		-- entitiy is the solid shape
 		local entity = entity.entity
+		-- entity is the game's entity table thing
 		if entity.getQuad and entity ~= self then
-			local screenX, screenY, angle = self:lookAt(entity)
-			local quad = entity:getQuad(angle)
-			love.graphics.draw(entity.spritesheet, quad, screenX, screenY)
+			if entity.floor then
+				over[entity] = true
+			else
+				local screenX, screenY, angle = self:lookAt(entity)
+				local quad = entity:getQuad(angle)
+				love.graphics.draw(entity.spritesheet, quad, screenX, screenY)
+			end
 		end
 	end
-	for entity in pairs(entities) do
-		local entity = entity.entity
-		if entity.getQuad and entity ~= self then
-			local screenX, screenY, angle = self:lookAt(entity)
-			local quad = entity:getQuad(angle)
-			love.graphics.draw(entity.spritesheet, quad, screenX, screenY)
-		end
+	for entity in pairs(over) do
+		local screenX, screenY, angle = self:lookAt(entity)
+		local quad = entity:getQuad(angle)
+		love.graphics.draw(entity.spritesheet, quad, screenX, screenY)
 	end
 	love.graphics.draw(self.spritesheet, self:getQuad(constants.up), -self.spriteRadius, -self.spriteRadius)
 	if self.reachX and self.reachY then

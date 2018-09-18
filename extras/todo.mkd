@@ -5,5 +5,5 @@
 * Figure out my Lua conventions
 * Make the entity spatials getter and create proper absolute setters too
 	* Watch out, I think reach will break.
-* Make a standard entitiy ticking function
 * Optimise draw with... batching?
+* Include light in "can see object" for both getSeenEntities and canSeeEntity. use a "night vision" number

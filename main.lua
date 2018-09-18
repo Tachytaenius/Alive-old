@@ -52,7 +52,7 @@ local function initialisePlay(seed, recordName, loadedFrom)
 	dims = {}
 	
 	local overworld = Dimension:new(width, height, rng, "maacian overworld")
-	cameraEntity = overworld:newPlayer(rng, "male", 1, constants.terrainScale * width / 2, constants.terrainScale * height / 2, 0)
+	cameraEntity = overworld:newPlayer(rng, "male", 1, 0, 0, 0)
 	table.insert(dims, overworld)
 end
 
@@ -60,6 +60,7 @@ local huge = math.huge
 local window = constants.window
 local sqrt = math.sqrt
 local window, wall = constants.window, constants.wall
+local relevantTiles = {} -- recycled
 local function tickPlay(...)
 	-- Get actions.
 	for _, dimension in ipairs(dims) do
@@ -107,17 +108,17 @@ local function tickPlay(...)
 		local collisionsFunction = collider.collisions
 		
 		-- tiles
-		local tiles = {}
-		for entitiy in pairs(dimension.entities) do
+		for _, entitiy in ipairs(dimension.entities) do
 			for shape in pairs(collisionsFunction(collider, entity.solidShape)) do
 				if shape.tile then
-					tiles[shape] = true
+					relevantTiles[shape] = true
 				end
 			end
 		end
 		
 		local collisions = {}
-		for shape in pairs(tiles) do
+		for shape in pairs(relevantTiles) do
+			relevantTiles[shape] = nil
 			local type = shape.collisionType
 			if type == window or type == wall then
 				for other, vector in pairs(dimension.collider:collisions(shape)) do

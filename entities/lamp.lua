@@ -27,7 +27,7 @@ end
 function Lamp:disableLight()
 	if self.lightOn then
 		self.lightOn = false
-		self.dimension.collider:remove(self.light)
+		self.dimension.collider:remove(self.lightShape)
 	end
 end
 
@@ -35,7 +35,7 @@ function Lamp:enableLight()
 	-- if self.lightOn == nil then self:createLight() end
 	if not self.lightOn then
 		self.lightOn = true
-		self.dimension.collider:register(self.light)
+		self.dimension.collider:register(self.lightShape)
 	end
 end
 
@@ -49,14 +49,14 @@ function Lamp:createLight()
 	local light = self.dimension.collider:circle(self.x, self.y, self.energy)
 	light.light = true -- entity, light or tile?
 	light.energy, light.r, light.g, light.b = self.energy, self.r, self.g, self.b
-	self.light = light
+	self.lightShape = light
 	self.lightOn = true
 end
 
 Lamp.containable = true
 function Lamp:tick(random, index)
 	local x, y, theta = self:getSpatials()
-	self.light:moveTo(x, y)
+	self.lightShape:moveTo(x, y)
 	
 	local container = self.containedBy
 	local shine = true

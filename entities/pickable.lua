@@ -4,7 +4,7 @@ local Pickable = class("Pickable", BaseEntity)
 Pickable.floor = true
 
 function Pickable:generate(rng, dimension, x, y)
-	return self(dimension, {x, y, 0}, self.growTime * rng:random())
+	return self(dimension, {x, y}, self.growTime * rng:random())
 end
 
 function Pickable:initialize(dimension, spatials, growth)

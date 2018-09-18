@@ -42,6 +42,7 @@ function Dimension:initialize(width, height, rng, theme, time, length)
 			column[y] = newTile
 		end
 	end
+	self:placePatch(rng, classes.soupCap, 1024, 1024, 20, 8)
 end
 
 local twilightEtc = constants.twilightEtc
