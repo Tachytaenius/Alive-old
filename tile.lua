@@ -1,5 +1,5 @@
 local unitsPerTile, scale = constants.unitsPerTile, constants.terrainScale
-local texture = love.graphics.newImage("assets/images/terrain/base.png")
+local base = love.graphics.newImage("assets/images/terrain/base.png")
 local colour, rectangle, draw = love.graphics.setColor, love.graphics.rectangle, love.graphics.draw
 local getQuad = quadreasonable.getQuad
 local round = math.round
@@ -17,14 +17,14 @@ local function drawFunction(self, shader, entityX, entityY) -- draw co-ordinates
 		noiseInfo[1], noiseInfo[2], noiseInfo[3], noiseInfo[4] = constituent.noisiness, constituent.contrast, constituent.brightness, 1
 		shader:send("noise_info", noiseInfo)
 		colour(constituent.r, constituent.g, constituent.b, constituent.a * quantity / totalComponents * 3.5)
-		draw(texture, drawX, drawY)
+		draw(base, drawX, drawY)
 	end
 	for overlay, quantity in pairs(self.toppings) do
 		if quantity > 0 then
 			colour(overlay.getColour(totalComponents, components))
 			noiseInfo[1], noiseInfo[2], noiseInfo[3], noiseInfo[4] = overlay.noisiness, overlay.contrast, overlay.brightness, quantity
 			shader:send("noise_info", noiseInfo)
-			draw(texture, drawX, drawY)
+			draw(base, drawX, drawY)
 		end
 	end
 end

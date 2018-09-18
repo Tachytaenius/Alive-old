@@ -6,6 +6,4 @@
 * Make the entity spatials getter and create proper absolute setters too
 	* Watch out, I think reach will break.
 * Make a standard entitiy ticking function
-* Make shadows using a normal map
 * Optimise draw with... batching?
-* Point shapes for pickables.

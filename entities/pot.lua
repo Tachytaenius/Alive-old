@@ -42,13 +42,13 @@ function Pot:giveEntity()
 	end
 end
 
-function Pot:tickContainedEntity(entity, random)
+function Pot:tickContainedEntity(entity, rng)
 	local inventory = self.inventory
 	local index = getKey(entity)
 	if index > 1 then
-		entity:reactTo(inventory[index - 1], random)
+		entity:reactTo(inventory[index - 1], rng)
 	end
-	local dimensionChange, escaped = entity:tick(random, index)
+	local dimensionChange, escaped = entity:tick(rng, index)
 	if dimensionChange or escaped then
 		table.remove(inventory, index)
 		entity:setSpatials(self:getSpatials())
@@ -57,12 +57,12 @@ function Pot:tickContainedEntity(entity, random)
 end
 
 local round = math.round
-function Pot:tick(random)
+function Pot:tick(rng)
 	if self.isBroken then
 		self.leakTimer = (self.leakTimer + 1) % self.maxLeak
 		if self.leakTimer == 0 then
 			local inventory = self.inventory
-			local index = round(random * #inventory)
+			local index = round(rng:random() * #inventory)
 			local entity = table.remove(inventory, index)
 			entity:setSpatials(self:getSpatials())
 		end

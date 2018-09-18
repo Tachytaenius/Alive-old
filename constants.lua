@@ -13,6 +13,7 @@ constants.inputs = {
 	forwards = true, strafeLeft = true, backwards = true, strafeRight = true, turnLeft = true, turnRight = true, use = true, run = true, duck = true, sneak = true, act = true, -- Recorded in demos.
 	pause = true, screenshot = true, scaleUp = true, scaleDown = true, toggleFullscreen = true, toggleInfo = true -- Not recorded in demos. -- TODO: Figure out the demo system. If there is a quick record button et cetera it goes here.
 }
+constants.turnFraction = 32 -- tau / this = maximum turning per tick for an animal
 constants.ground = 0
 constants.pit = 1
 constants.liquid = 2

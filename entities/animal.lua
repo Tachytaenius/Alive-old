@@ -62,6 +62,8 @@ end
 
 local sin, cos = math.sin, math.cos
 
+local turnFraction = constants.turnFraction
+
 function Animal:think(key, seed) -- The second argument is there to let the AI treat itself differently to other entities.
 	local actions = {x = 0, y = 0, theta = 0, speedMultiplier = 0}
 	self.actions = actions
@@ -86,7 +88,7 @@ function Animal:think(key, seed) -- The second argument is there to let the AI t
 			local relR, relTheta = math.cartesianToPolar(relX, relY)
 			local relTheta = (relTheta - self.theta - tau / 4) % tau
 			local turnBy = relTheta > tau / 2 and -(tau - relTheta) or relTheta
-			self.actions.theta = math.max(math.min(turnBy, tau / 64), -tau / 64)
+			self.actions.theta = math.max(math.min(turnBy, tau / turnFraction), -tau / turnFraction)
 			
 			local moveDistance = math.max(relR - self.aiInfo.followingDistance, 0)
 			local speedMultiplier = math.min(2, moveDistance / self.speed)
@@ -114,8 +116,8 @@ function Animal:control(key, inputs, deltaInputs)
 		speed = speed / 2 -- The speed is per-axis. Doing this if we're moving on both axes reduces the total speed to what it should be.
 	end
 	
-	if inputs.turnLeft then self.actions.theta = self.actions.theta - tau / 128 * self.actions.speedMultiplier end
-	if inputs.turnRight then self.actions.theta = self.actions.theta + tau / 128 * self.actions.speedMultiplier end
+	if inputs.turnLeft then self.actions.theta = self.actions.theta - tau / turnFraction / 2 * self.actions.speedMultiplier end
+	if inputs.turnRight then self.actions.theta = self.actions.theta + tau / turnFraction / 2 * self.actions.speedMultiplier end
 	
 	if inputs.forwards and not inputs.backwards then self.actions.y = speed end
 	if inputs.backwards and not inputs.forwards then self.actions.y = -speed end

@@ -48,13 +48,13 @@ function setSettings()
 end
 
 function getSettings()
-	-- If there is no settings.json then defaults.json is created.
-	-- If settings.json is missing any settings, then defaults are used. These may not be the same defaults as defaults.json, an example being graphics.fullscreen: it's 2 in defaults.json-- (the recommended settings) and 1 in this function (the natural choice for a fallback value)
+	-- If there is no settings.json then default_settings.json is created.
+	-- If settings.json is missing any settings, then defaults are used. These may not be the same defaults as default_settings.json, an example being graphics.fullscreen: it's 2 in default_settings.json-- (the recommended settings) and 1 in this function (the natural choice for a fallback value)
 	
 	local info = love.filesystem.getInfo("settings.json")
 	if not info or info.type ~= "file" then
 		warn("Couldn't find settings.json. Creating.")
-		love.filesystem.write("settings.json", love.filesystem.read("defaults.json"))
+		love.filesystem.write("settings.json", love.filesystem.read("default_settings.json"))
 	end
 	
 	local decoded = json.decode(love.filesystem.read("settings.json"))
