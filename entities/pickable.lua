@@ -1,15 +1,16 @@
 local BaseEntity = classes.baseEntity
 local Pickable = class("Pickable", BaseEntity)
 
+Pickable.nonBlocking = true
 Pickable.floor = true
-
-function Pickable:generate(rng, dimension, x, y)
-	return self(dimension, {x, y}, self.growTime * rng:random())
-end
 
 function Pickable:initialize(dimension, spatials, growth)
 	BaseEntity.initialize(self, nil, dimension, spatials, false, true)
 	self.growth = math.min(growth, self.growTime)
+end
+
+function Pickable:generate(rng, dimension, x, y)
+	return self(dimension, {x, y}, self.growTime * rng:random())
 end
 
 function Pickable:tick(random)

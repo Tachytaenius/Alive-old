@@ -46,8 +46,8 @@ local function initialisePlay(seed, recordName, loadedFrom)
 	lastInputs = {{}} -- One per player.
 	viewport = {love.graphics.newCanvas(constants.viewportWidth, constants.viewportHeight), stencil = true}
 	
-	local width = 200 -- In tiles, not in pixels. If it were in pixels that value would be multiplied by constants.terrainScale.
-	local height = 200
+	local width = 10 -- In tiles, not in pixels. If it were in pixels that value would be multiplied by constants.terrainScale.
+	local height = 10
 	
 	dims = {}
 	
@@ -93,8 +93,7 @@ local function tickPlay(...)
 		for entityID, entity in ipairs(dimension.entities) do
 			if entity.tick and not entity.new then
 				local containedBy = entity.containedBy
-				local result
-				if containedBy then result = containedBy:tickContainedEntity(entity, rng) else result = entity:tick(rng) end
+				local result = containedBy and containedBy:tickContainedEntity(entity, rng) or entity:tick(rng)
 				dimensionChanges[dimensionID][entityID] = result
 			end
 			if entity.new then entity.new = false
@@ -108,7 +107,7 @@ local function tickPlay(...)
 		local collisionsFunction = collider.collisions
 		
 		-- tiles
-		for _, entitiy in ipairs(dimension.entities) do
+		for _, entity in pairs(dimension.entities) do
 			for shape in pairs(collisionsFunction(collider, entity.solidShape)) do
 				if shape.tile then
 					relevantTiles[shape] = true
@@ -194,10 +193,10 @@ local function tickPlay(...)
 	
 	-- Kill any entities that should be dead, tick the dimension time, et cetera.
 	for _, dimension in ipairs(dims) do
-		dimension.time = (dimension.time + 1) % dimension.dayLength
 		for _, entity in ipairs(dimension.entities) do
 			if entity.checkDie then entity:checkDie(rng) end
 		end
+		dimension.time = (dimension.time + 1) % dimension.dayLength
 	end
 	
 	-- Save the inputs.

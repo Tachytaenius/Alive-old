@@ -124,7 +124,8 @@ function Animal:control(key, inputs, deltaInputs)
 	if inputs.strafeRight and not inputs.strafeLeft then self.actions.x = -speed end
 	if inputs.strafeLeft and not inputs.strafeRight then self.actions.x = speed end
 	
-	if deltaInputs.act then self.actions.toggleOutfit = true end
+	if deltaInputs.act then self.actions.toggleOutfit = true end -- TODO: menu
+	if deltaInputs.use then self.actions.build = true end
 end
 
 function Animal:getSeenShapes()
@@ -139,7 +140,7 @@ function Animal:getSeenShapes()
 		if k.tile then
 			tiles[k] = true
 			
-			if k.tile and k.collisionType == wall then
+			if k.collisionType == wall then
 				occluders[k] = true
 			end
 			
@@ -156,7 +157,7 @@ function Animal:getSeenShapes()
 	for k in pairs(seenCircle) do
 		if k.tile then
 			tiles[k] = true
-			if k.tile and k.collisionType == wall then
+			if k.collisionType == wall then
 				occluders[k] = true
 			end
 		elseif k.entity then
@@ -229,6 +230,12 @@ function Animal:tick(random)
 	local xTile = floor(x / constants.terrainScale)
 	local yTile = floor(y / constants.terrainScale)
 	
+	if reachX and reachY and self.actions.build then
+		local tile = self.dimension.tiles[floor(reachX / scale)][floor(reachY / scale)]
+		tile.collisionType = wall
+		tile.wallComponents = copy(tile.groundComponents)
+	end
+	
 	if actions.toggleOutfit and self.toggleableOutfit then self.toggledOutfit = not self.toggledOutfit end
 	self:generateViewShapes()
 end
@@ -248,14 +255,13 @@ function Animal:lookAt(entity) -- TODO: Better name
 	-- Return X and Y screen coordinates if it can, used in rendering.
 	local vieweeX, vieweeY, vieweeTheta  = entity:getSpatials()
 	local viewerX, viewerY, viewerTheta = self:getSpatials()
-	local angle = round(constants.angles * ((vieweeTheta - viewerTheta) % tau) / tau) % constants.angles
+	local angle = vieweeTheta and round(constants.angles * ((vieweeTheta - viewerTheta) % tau) / tau) % constants.angles
 	local x = viewerX - vieweeX
 	local y = viewerY - vieweeY
 	local r, theta = math.cartesianToPolar(x, y)
 	local angleDifference = (viewerTheta - theta + tau * 1.25) % tau - tau / 2
 	local inFOV = angleDifference <= self.fov / 2 and angleDifference >= -self.fov / 2
 	local inRange = r - entity.spriteRadius <= self.falloff -- R won't be negative.
-	local angle = round(constants.angles * ((vieweeTheta - viewerTheta) % tau) / tau) % constants.angles
 	x, y = math.polarToCartesian(r, theta - viewerTheta)
 	return round(x - entity.spriteRadius), round(y - entity.spriteRadius), angle
 end

@@ -42,7 +42,6 @@ function Dimension:initialize(width, height, rng, theme, time, length)
 			column[y] = newTile
 		end
 	end
-	self:placePatch(rng, classes.soupCap, 1024, 1024, 20, 8)
 end
 
 local twilightEtc = constants.twilightEtc
@@ -56,7 +55,7 @@ end
 function Dimension:newPlayer(rng, gender, who, x, y, theta, relativeTo)
 	local player
 	if gender == "female" then
-		player = classes.femalePlayer(who, self, {x, y, theta, relativeTo}, nil)
+		player = classes.femalePlayer(who, self, {x, y, theta, relativeTo}, nil) -- TODO: replace that nil with a value
 	elseif gender == "male" then
 		player = classes.malePlayer(who, self, {x, y, theta, relativeTo}, nil)
 	end

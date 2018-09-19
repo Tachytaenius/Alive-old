@@ -1,11 +1,10 @@
 local BaseEntity = class("BaseEntity")
 
-function BaseEntity:initialize(player, dimension, spatials, square, nonBlocking)
+function BaseEntity:initialize(player, dimension, spatials, square)
 	self.x, self.y, self.theta, self.relativeTo = spatials.x or spatials[1], spatials.y or spatials[2], spatials.z or spatials[3], spatials.theta or spatials[4], spatials.relativeTo or spatials[5]
 	self.solidShape = square and dimension.collider:rectangle(self.x - self.solidRadius, self.y - self.solidRadius, self.solidRadius * 2, self.solidRadius * 2) or dimension.collider:circle(self.x, self.y, self.solidRadius)
 	self.solidShape.entity = self -- Mutually linked
 	self.player = player
-	self.nonBlocking = nonBlocking
 	self.new = true
 	self.dimension = dimension
 end

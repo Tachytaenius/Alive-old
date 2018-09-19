@@ -7,3 +7,6 @@
 	* Watch out, I think reach will break.
 * Optimise draw with... batching?
 * Include light in "can see object" for both getSeenEntities and canSeeEntity. use a "night vision" number
+* Stop drawing during times of intense processing. Discuss methods on Discord.
+* organise how tiles' different layers are composed (roof, wall, ground...)
+	* Draw top layer, if it returns "there is a hole in what i have drawn" then draw the layer below and repeat
