@@ -59,7 +59,12 @@ function Dimension:newPlayer(rng, gender, who, x, y, theta, relativeTo)
 	elseif gender == "male" then
 		player = classes.malePlayer(who, self, {x, y, theta, relativeTo}, nil)
 	end
+	local follower = classes.femalePlayer(nil, self, {x, y, theta})
+	-- follower.aiInfo.following = player
+	-- follower.aiInfo.followingDistance = 24
+	table.insert(self.entities, follower)
 	table.insert(self.entities, player)
+	self:placePatch(rng, classes.soupCap, 60, 60, 60, 60)
 	return player
 end
 

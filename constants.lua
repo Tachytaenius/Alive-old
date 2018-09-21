@@ -8,11 +8,14 @@ constants.viewportWidth = 384
 constants.viewportHeight = 256
 constants.screenWidth = 384
 constants.screenHeight = 256
-constants.up, constants.right, constants.down, constants.left = 0, 1, 2, 3 -- In terms of angles in spritesheets 
+constants.up, constants.right, constants.down, constants.left = 0, 1, 2, 3 -- In terms of angles in spritesheets
+local recorded, unrecorded = 1, 2
+constants.recorded, constants.unrecorded = recorded, unrecorded
 constants.inputs = {
-	forwards = true, strafeLeft = true, backwards = true, strafeRight = true, turnLeft = true, turnRight = true, use = true, run = true, duck = true, sneak = true, act = true, -- Recorded in demos.
-	pause = true, screenshot = true, scaleUp = true, scaleDown = true, toggleFullscreen = true, toggleInfo = true -- Not recorded in demos. -- TODO: Figure out the demo system. If there is a quick record button et cetera it goes here.
+	forwards = recorded, strafeLeft = recorded, backwards = recorded, strafeRight = recorded, turnLeft = recorded, turnRight = recorded, use = recorded, run = recorded, duck = recorded, sneak = recorded, act = recorded,
+	pause = recorded, screenshot = recorded, scaleUp = recorded, scaleDown = recorded, toggleFullscreen = recorded, toggleInfo = recorded-- TODO: Figure out the demo system. If there is a quick record button et cetera it goes here.
 }
+constants.takenDamage = 1
 constants.turnFraction = 32 -- tau / this = maximum turning per tick for an animal
 constants.ground = 0
 constants.pit = 1

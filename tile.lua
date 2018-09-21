@@ -1,3 +1,5 @@
+changes = {} -- TODO: *locally* accessible from main.lua
+
 local unitsPerTile, scale = constants.unitsPerTile, constants.terrainScale
 
 local boost = 4 -- the greater this number the less of a constituent you need to give it a greater impact when drawing the tile
@@ -8,17 +10,30 @@ local function new(mapFunction)
 	return love.graphics.newImage(tile)
 end
 
+local function bricks(xcount, ycount, shift)
+	return new(function(x, y, r, g, b, a)
+		local xinterval = scale / xcount
+		local yinterval = scale / ycount
+		if shift == "x" then
+			if math.floor(y / yinterval) % 2 == 1 then
+				x = x + xinterval / 2
+			end
+		elseif shift == "y" then
+			if math.floor(x / xinterval) % 2 == 1 then
+				y = y + yinterval / 2
+			end
+		end
+		local isBlack = math.isInteger(x / xinterval) or math.isInteger(y / yinterval)
+		
+		local i = isBlack and 0 or 1 -- intensity
+		return i, i, i, 1
+	end)
+end
+
 local base = new(function(x, y, r, g, b, a)
 	return 1, 1, 1, 1
 end)
-local flagstones = new(function(x, y, r, g, b, a)
-	local count = 2
-	local interval = scale / count
-	local isBlack = math.isInteger(x / interval) or math.isInteger(y / interval)
-	
-	local i = isBlack and 0 or 1 -- intensity
-	return i, i, i, 1
-end)
+local flagstones = bricks(2, 2, "x")
 
 local colour, rectangle, draw = love.graphics.setColor, love.graphics.rectangle, love.graphics.draw
 local getQuad = quadreasonable.getQuad
@@ -61,6 +76,11 @@ local function drawFunction(self, shader, entityX, entityY) -- draw co-ordinates
 		end
 	end
 end
+local takenDamage = constants.takenDamage
+local function takeDamageFunction(self, amount, dx, dy)
+	local change = {nature = takenDamage, tile = self, amount = amount, dx = dx, dy = dy}
+	changes[change] = true
+end
 
 local round = math.round
 local scale, tbs = constants.terrainScale, constants.tileBorderSize
@@ -69,6 +89,7 @@ function new(newTile, dimension, rng, x, y) -- tile co-ordinates
 	newTile.tile = true
 	newTile.x, newTile.y = x, y
 	newTile.draw = drawFunction
+	newTile.takeDamage = takeDamageFunction
 	local fullness = rng:random() * 0.1 + 0.8
 	local components = {}
 	local total = 0

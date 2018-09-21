@@ -1,3 +1,5 @@
+love.graphics.setDefaultFilter("nearest", "nearest", 0)
+love.graphics.setLineStyle("rough")
 math = require("lib/mathsies")
 quadreasonable = require("lib/quadreasonable")
 require("utilities")
@@ -7,8 +9,6 @@ require("classes")
 settings = getSettings()
 ffi = require("ffi")
 hc = require("lib/HC") -- references "math" which is now mathsies, making it deterministic.
-love.graphics.setDefaultFilter("nearest", "nearest")
-love.graphics.setLineStyle("rough")
 
 local state
 local canvas = love.graphics.newCanvas()
@@ -54,6 +54,9 @@ local function initialisePlay(seed, recordName, loadedFrom)
 	local overworld = Dimension:new(width, height, rng, "maacian overworld")
 	cameraEntity = overworld:newPlayer(rng, "male", 1, 0, 0, 0)
 	table.insert(dims, overworld)
+	
+	local overworld = Dimension:new(width, height, rng, "maacian overworld")
+	table.insert(dims, overworld)
 end
 
 local huge = math.huge
@@ -61,6 +64,7 @@ local window = constants.window
 local sqrt = math.sqrt
 local window, wall = constants.window, constants.wall
 local relevantTiles = {} -- recycled
+local takenDamage = constants.takenDamage -- tile change nature id
 local function tickPlay(...)
 	-- Get actions.
 	for _, dimension in ipairs(dims) do
@@ -117,7 +121,7 @@ local function tickPlay(...)
 		
 		local collisions = {}
 		for shape in pairs(relevantTiles) do
-			relevantTiles[shape] = nil
+			relevantTiles[shape] = nil -- recycling is good for the planet!
 			local type = shape.collisionType
 			if type == window or type == wall then
 				for other, vector in pairs(dimension.collider:collisions(shape)) do
@@ -174,29 +178,51 @@ local function tickPlay(...)
 	
 	-- Move any entities that changed dimensions.
 	for fromID, changesList in ipairs(dimensionChanges) do
-		for toID, entityID in ipairs(changesList) do
-			local solidShape, viewSector, viewCircle = entityToBeMoved.solidShape, entityToBeMoved.viewSector, entityToBeMoved.viewCircle
+		local from = dims[fromID]
+		local fromCollider = from.collider
+		local fromRemove = fromCollider.remove
+		local fromEntities = from.entities
+		for entityToBeMovedID, toID in pairs(changesList) do
 			local from, to = dims[fromID], dims[toID]
-			local fromCollider, toCollider = from.collider, to.collider
-			local fromRemove, toRegister = fromCollider.remove, toCollider.register
-			local entityToBeMoved = table.remove(from.entities, entityID)
+			local entityToBeMoved = from.entities[entityToBeMovedID]
+			local solidShape, viewSector, viewCircle = entityToBeMoved.solidShape --, entityToBeMoved.viewSector, entityToBeMoved.viewCircle
+			local toCollider = to.collider
+			local entityToBeMoved = table.remove(fromEntities, entityToBeMovedID)
 			fromRemove(fromCollider, solidShape)
-			toRegister(toCollider, solidShape)
+			entityToBeMoved.dimension = to
+			entityToBeMoved:reregisterSolidShape()
+			--[[ remade every frame anyway
+			local toRegister = toCollider.register
 			fromRemove(fromCollider, viewSector)
 			toRegister(toCollider, viewSector)
 			fromRemove(fromCollider, viewCircle)
 			toRegister(toCollider, viewCircle)
+			]]
 			table.insert(to.entities, entityToBeMoved)
-			entityToBeMoved.dimension = to
 		end
 	end
 	
-	-- Kill any entities that should be dead, tick the dimension time, et cetera.
+	-- Kill any entities that should be dead, knock entities back, tick the dimension time, et cetera.
 	for _, dimension in ipairs(dims) do
 		for _, entity in ipairs(dimension.entities) do
 			if entity.checkDie then entity:checkDie(rng) end
+			entity.x = entity.x + entity.knockX
+			entity.knockX = 0
+			entity.y = entity.y + entity.knockY
+			entity.knockY = 0
 		end
 		dimension.time = (dimension.time + 1) % dimension.dayLength
+	end
+	
+	-- Tiles queue up their changes and then apply them at the end of each tick.
+	-- changes can be found in tile.lua as a global. TODO: FIXME
+	for change in pairs(changes) do
+		local nature = change.nature
+		local tile = change.tile
+		if change.nature == takenDamage then
+			local amount, dx, dy = change.amount, change.dx, change.dy
+			-- TODO: fling wall constituents out in the dx, dy direction
+		end
 	end
 	
 	-- Save the inputs.

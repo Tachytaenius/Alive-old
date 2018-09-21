@@ -1,4 +1,4 @@
--- These are not necessarily elements, just things that a tile can be made from.
+-- These are not necessarily elements of the periodic table, just things that a tile can be made from.
 
 local function newConstituent(name, mass, rarity, r, g, b, a, noisiness, brightness, contrast)
 	local constituent = {r = r, g = g, b = b, a = a, noisiness = noisiness, brightness = brightness, contrast = contrast, name = name, mass = mass, rarity = rarity}
@@ -11,6 +11,7 @@ local clay = newConstituent("clay", 11,	2,			0.75, 0.5, 0.5, 1, 		1.5, 0, 0.15)
 local sand = newConstituent("sand", 9, 2,			0.8, 0.8, 0.3, 1,	 	7, 0, 0.15)
 local silt = newConstituent("silt", 8, 2,			0.4, 0.35, 0.4, 1, 		3, 0, 0.375)
 local granite = newConstituent("granite", 25, 2,	0.6, 0.5, 0.55, 1,		4, 0, 0.7)
+local quartz = newConstituent("quartz", 25, 0,		0.5, 0.5, 0.5, 1,		1, 1, 0)
 
 -- TODO: reactions
 
@@ -40,7 +41,8 @@ constituents = {
 	clay = clay,
 	sand = sand,
 	silt = silt,
-	granite = granite
+	granite = granite,
+	quartz = quartz
 }
 
 overlays = {

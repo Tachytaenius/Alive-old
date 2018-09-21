@@ -5,7 +5,7 @@ number brightness(vec4 colour) {
 extern vec4 info; // draw x, draw y, fov, angle
 extern Image occluders;
 extern bool use_falloff;
-const number penetration_threshold = 12;
+const number penetration_threshold = 11;
 const number tau = 6.28318530717958647692;
 const vec2 size = vec2(1024, 1024);
 vec4 effect(vec4 colour, Image texture, vec2 texture_coords, vec2 window_coords) {

@@ -10,3 +10,10 @@
 * Stop drawing during times of intense processing. Discuss methods on Discord.
 * organise how tiles' different layers are composed (roof, wall, ground...)
 	* Draw top layer, if it returns "there is a hole in what i have drawn" then draw the layer below and repeat
+* TODO: test lighting on more than just black/white
+* Stop sprite flickering
+* Stop objects from getting passed betwen tiles during collision detection
+* Dimesions as a *set,* not a list.
+* Make sure that RNG calls are in a deterministic order
+* Queue entity changes as is done with tiles
+* Tiles taking damage can be for walls, rooves or grounds

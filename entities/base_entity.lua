@@ -2,11 +2,17 @@ local BaseEntity = class("BaseEntity")
 
 function BaseEntity:initialize(player, dimension, spatials, square)
 	self.x, self.y, self.theta, self.relativeTo = spatials.x or spatials[1], spatials.y or spatials[2], spatials.z or spatials[3], spatials.theta or spatials[4], spatials.relativeTo or spatials[5]
-	self.solidShape = square and dimension.collider:rectangle(self.x - self.solidRadius, self.y - self.solidRadius, self.solidRadius * 2, self.solidRadius * 2) or dimension.collider:circle(self.x, self.y, self.solidRadius)
-	self.solidShape.entity = self -- Mutually linked
+	self.knockX, self.knockY = 0, 0
+	self.square = square
+	self.dimension = dimension
+	self:reregisterSolidShape()
 	self.player = player
 	self.new = true
-	self.dimension = dimension
+end
+
+function BaseEntity:reregisterSolidShape()
+	self.solidShape = self.square and self.dimension.collider:rectangle(self.x - self.solidRadius, self.y - self.solidRadius, self.solidRadius * 2, self.solidRadius * 2) or self.dimension.collider:circle(self.x, self.y, self.solidRadius)
+	self.solidShape.entity = self -- Mutually linked
 end
 
 -- TODO: put versions of all the standard entity functions in here and stop checking to see if they are on instances of this class or its descendants

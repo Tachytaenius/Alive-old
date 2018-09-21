@@ -124,7 +124,6 @@ function Animal:control(key, inputs, deltaInputs)
 	if inputs.strafeRight and not inputs.strafeLeft then self.actions.x = -speed end
 	if inputs.strafeLeft and not inputs.strafeRight then self.actions.x = speed end
 	
-	if deltaInputs.act then self.actions.toggleOutfit = true end -- TODO: menu
 	if deltaInputs.use then self.actions.build = true end
 end
 
@@ -180,6 +179,7 @@ function Animal:getSeenShapes()
 end
 
 function Animal:canSeeEntity(entity)
+	if self.dimension ~= entity.dimension then return false end
 	local shape = entity.solidShape
 	if self.viewCircle:collidesWith(shape) or self.viewSector:collidesWith(shape) then
 		return true -- TODO
@@ -219,9 +219,6 @@ function Animal:tick(random)
 	
 	local reachX, reachY = x + reachXMove, y + reachYMove
 	
-	if not (0 <= reachX and reachX <= width * scale and 0 <= reachY and reachY <= height * scale) then
-		reachX, reachY = nil, nil
-	end
 	self.reachX, self.reachY = reachX, reachY
 	self.x, self.y, self.theta = x, y, theta
 	
@@ -233,7 +230,11 @@ function Animal:tick(random)
 	if reachX and reachY and self.actions.build then
 		local tile = self.dimension.tiles[floor(reachX / scale)][floor(reachY / scale)]
 		tile.collisionType = wall
-		tile.wallComponents = copy(tile.groundComponents)
+		tile.wallComponents = {}
+		for k, v in pairs(constituents) do
+			tile.wallComponents[v] = 0
+		end
+		tile.wallComponents[constituents.quartz] = scale ^ 3
 	end
 	
 	if actions.toggleOutfit and self.toggleableOutfit then self.toggledOutfit = not self.toggledOutfit end
@@ -242,6 +243,10 @@ end
 
 function Animal:kill() -- TODO: Ways to die affect look of corpse.
 	self.dead = true
+end
+
+function Animal:canHit(entity)
+	 return true -- temporary
 end
 
 function Animal:checkDie(seed)
@@ -342,7 +347,7 @@ function Animal:see(viewportCanvasSetter)
 		local entity = entity.entity
 		-- entity is the game's entity table thing
 		if entity.getQuad and entity ~= self then
-			if entity.floor then
+			if not entity.floor then
 				over[entity] = true
 			else
 				local screenX, screenY, angle = self:lookAt(entity)
@@ -357,9 +362,6 @@ function Animal:see(viewportCanvasSetter)
 		love.graphics.draw(entity.spritesheet, quad, screenX, screenY)
 	end
 	love.graphics.draw(self.spritesheet, self:getQuad(constants.up), -self.spriteRadius, -self.spriteRadius)
-	if self.reachX and self.reachY then
-		love.graphics.draw(crosshairs, -crosshairsWidth / 2, -self.reach - crosshairsHeight / 2) -- TODO: For any reachX, reachY
-	end
 	love.graphics.origin()
 	love.graphics.setShader(fragmentFalloffShader)
 	vec[1], vec[2] = LaddX, LaddY
@@ -370,6 +372,9 @@ function Animal:see(viewportCanvasSetter)
 	love.graphics.draw(viewCanvas, VPaddX, VPaddY, -selfTheta, 1, 1, LaddX, LaddY)
 	love.graphics.setBlendMode("alpha", "alphamultiply")
 	love.graphics.setShader()
+	if self.reachX and self.reachY then
+		love.graphics.draw(crosshairs, -crosshairsWidth / 2, -self.reach - crosshairsHeight / 2, 0, 1, 1, -VPaddX, -VPaddY) -- TODO: For any reachX, reachY -- NOTE: current doesn't obey falloff
+	end
 end
 
 return Animal

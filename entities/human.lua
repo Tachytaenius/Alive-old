@@ -6,7 +6,7 @@ Human.solidRadius = 4
 Human.senseRadius = 12
 Human.BEARD_THRESHOLD = 60 * 60 * 2 * constants.speedOfPlay -- At what point does a male player become bearded?
 Human.MAX_BEARD = Human.BEARD_THRESHOLD -- We don't really need to continue incrementing the beard counter if it will have no effect. 
-Human.reach = constants.terrainScale * 2.5
+Human.reach = constants.terrainScale
 
 function Human:initialize(player, dimension, spatials, stats, status)
 	Biped.initialize(self, player, dimension, spatials, stats, status)
@@ -22,11 +22,10 @@ function Human:initialize(player, dimension, spatials, stats, status)
 end
 
 function Human:tick(random)
-	Biped.tick(self, random)
-	
 	if self.gender == "male" then
 		self.beard = math.min(self.beard + 1, Human.MAX_BEARD)
 	end
+	return Biped.tick(self, random)
 end
 
 function Human:getQuad(angle)
