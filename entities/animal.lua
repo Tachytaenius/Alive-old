@@ -224,17 +224,18 @@ function Animal:tick(random)
 	
 	self.solidShape:moveTo(x, y)
 	
-	local xTile = floor(x / constants.terrainScale)
-	local yTile = floor(y / constants.terrainScale)
-	
 	if reachX and reachY and self.actions.build then
-		local tile = self.dimension.tiles[floor(reachX / scale)][floor(reachY / scale)]
-		tile.collisionType = wall
-		tile.wallComponents = {}
-		for k, v in pairs(constituents) do
-			tile.wallComponents[v] = 0
+		local reachXt, reachYt = floor(reachX / scale), floor(reachY / scale)
+		local column = self.dimension.tiles[reachXt]
+		local tile = column and column[reachYt]
+		if tile then
+			tile.collisionType = wall
+			tile.wallComponents = {}
+			for k, v in pairs(constituents) do
+				tile.wallComponents[v] = 0
+			end
+			tile.wallComponents[constituents.quartz] = scale ^ 3
 		end
-		tile.wallComponents[constituents.quartz] = scale ^ 3
 	end
 	
 	if actions.toggleOutfit and self.toggleableOutfit then self.toggledOutfit = not self.toggledOutfit end

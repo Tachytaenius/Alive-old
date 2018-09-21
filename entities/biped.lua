@@ -113,10 +113,11 @@ function Biped:punch(hand, rng)
 	end
 	
 	local damage = (rng:random(0.25) + 0.75) * self.strength / (self.handedness == hand and 1 or 1.5) * 1 - (currentDistance / reach)
+	local knockX, knockY = dx / reach * abs(reach - currentDistance), dy / reach * abs(reach - currentDistance)
 	for punchable in pairs(punched) do
 		if punchable.entity and not punchable.entity.new then
+			local entity = punchable.entity
 			if entity.damage then entity.damage = entity.damage + damage / shapeCount elseif entity.integrity then entity.integrity = entity.integrity - damage end
-			local knockX, knockY = dx / reach * abs(reach - currentDistance), dy / reach * abs(reach - currentDistance)
 			entity.knockX, entity.knockY = entity.knockX + knockX, entity.knockY + knockY
 		elseif punchable.collisionType == wall then
 			punchable:takeDamage(damage, dx / reach, dy / reach)

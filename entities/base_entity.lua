@@ -34,8 +34,9 @@ end
 function BaseEntity:getSpatials()
 	-- TODO: If relative to something then treat self's spatials as an offset.
 	
+	local entity
 	if self.relativeTo then
-		local entity = self.relativeTo
+		entity = self.relativeTo
 	else
 		entity = self
 	end

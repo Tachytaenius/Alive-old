@@ -29,8 +29,8 @@ end
 local angles = constants.angles
 function Chair:getQuad(angle)
 	local size = self.spriteRadius * 2
-	local whichX = self.isBroken and size or 0
-	return quadreasonable.getQuad(whichX, angle, size, size, 2, 4, true)
+	local whichX = self.isBroken and 1 or 0
+	return quadreasonable.getQuad(whichX, angle, size, size, 2, 4, 2)
 end
 
 return Chair

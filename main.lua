@@ -39,6 +39,7 @@ local Dimension = classes.dimension
 local dims, viewport, lastInputs, rng, rand
 local cameraEntity
 local slowness = constants.slownessOfPlay
+local scale = constants.terrainScale
 local function initialisePlay(seed, recordName, loadedFrom)
 	rng = love.math.newRandomGenerator()
 	rand = rng.random
@@ -46,16 +47,13 @@ local function initialisePlay(seed, recordName, loadedFrom)
 	lastInputs = {{}} -- One per player.
 	viewport = {love.graphics.newCanvas(constants.viewportWidth, constants.viewportHeight), stencil = true}
 	
-	local width = 10 -- In tiles, not in pixels. If it were in pixels that value would be multiplied by constants.terrainScale.
-	local height = 10
+	local width = 250 -- In tiles, not in pixels. If it were in pixels that value would be multiplied by constants.terrainScale.
+	local height = 250
 	
 	dims = {}
 	
-	local overworld = Dimension:new(width, height, rng, "maacian overworld")
-	cameraEntity = overworld:newPlayer(rng, "male", 1, 0, 0, 0)
-	table.insert(dims, overworld)
-	
-	local overworld = Dimension:new(width, height, rng, "maacian overworld")
+	local overworld = Dimension(width, height, rng, "maacian overworld", 0, 6000)
+	cameraEntity = overworld:newPlayer(rng, "male", 1, width * scale / 2, height * scale / 2, 2)
 	table.insert(dims, overworld)
 end
 
@@ -172,6 +170,7 @@ local function tickPlay(...)
 						other.entity:setSpatials(otherEntityX + pusheeFactor * -vectorX, otherEntityY + pusheeFactor * -vectorY, otherEntityTheta)
 					end
 				end
+			
 			end
 		end
 	end
@@ -217,6 +216,8 @@ local function tickPlay(...)
 	-- Tiles queue up their changes and then apply them at the end of each tick.
 	-- changes can be found in tile.lua as a global. TODO: FIXME
 	for change in pairs(changes) do
+		changes[change] = nil
+		shab = shab + 1
 		local nature = change.nature
 		local tile = change.tile
 		if change.nature == takenDamage then

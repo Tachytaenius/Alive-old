@@ -56,7 +56,7 @@ end
 Lamp.containable = true
 function Lamp:tick(random, index)
 	local x, y, theta = self:getSpatials()
-	self.lightShape:moveTo(x, y)
+	if self.lightOn then self.lightShape:moveTo(x, y) end
 	
 	local container = self.containedBy
 	local shine = true

@@ -13,7 +13,8 @@
 * TODO: test lighting on more than just black/white
 * Stop sprite flickering
 * Stop objects from getting passed betwen tiles during collision detection
-* Dimesions as a *set,* not a list.
+* Stop objects from tunelling through tiles during collision detectiona
 * Make sure that RNG calls are in a deterministic order
 * Queue entity changes as is done with tiles
 * Tiles taking damage can be for walls, rooves or grounds
+* Do shade tile if lamp shadow and FOV shadow are on different sides
