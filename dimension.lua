@@ -48,7 +48,7 @@ local twilightEtc = constants.twilightEtc
 local tri, tau = math.tri, math.tau
 function Dimension:getLightLevel()
 	local sunLight = (tri(self.time / self.dayLength * tau - tau/4)+1)/2
-	if twilightEtc then sunLight = sunLight * 0.75 + 0.125 end
+	sunLight = twilightEtc and sunLight * 0.75 + 0.125 or sunLight
 	return sunLight, sunLight, sunLight
 end
 
@@ -63,14 +63,14 @@ function Dimension:newPlayer(rng, gender, who, x, y, theta, relativeTo)
 	
 	
 	
-	local follower = classes.femalePlayer(nil, self, {x, y, theta})
-	follower.aiInfo.following = player
-	follower.aiInfo.followingDistance = 24
-	table.insert(self.entities, follower)
-	local follower2 = classes.ghostMaiden(nil, self, {x, y, theta})
-	follower2.aiInfo.following = player
-	follower2.aiInfo.followingDistance = 24
-	table.insert(self.entities, follower2)
+	-- local follower = classes.femalePlayer(nil, self, {x, y, theta})
+	-- follower.aiInfo.following = player
+	-- follower.aiInfo.followingDistance = 24
+	-- table.insert(self.entities, follower)
+	-- local follower2 = classes.ghostMaiden(nil, self, {x, y, theta})
+	-- follower2.aiInfo.following = player
+	-- follower2.aiInfo.followingDistance = 24
+	-- table.insert(self.entities, follower2)
 	self:placePatch(rng, classes.soupCap, x, y, 60, 60)
 	
 	table.insert(self.entities, classes.woodenChair(self, {x, y, 0}, 35))

@@ -52,7 +52,7 @@ local function initialisePlay(seed, recordName, loadedFrom)
 	
 	dims = {}
 	
-	local overworld = Dimension(width, height, rng, "maacian overworld", 0, 1000000)
+	local overworld = Dimension(width, height, rng, "maacian overworld")
 	cameraEntity = overworld:newPlayer(rng, "male", 1, width * scale / 2, height * scale / 2, 2)
 	table.insert(dims, overworld)
 end

@@ -11,16 +11,17 @@ const number tau = 6.28318530717958647692;
 const vec2 size = vec2(1024, 1024);
 vec4 effect(vec4 colour, Image texture, vec2 texture_coords, vec2 window_coords) {
 	vec2 path = window_coords - info.xy;
-	number len = length(path);
 	vec2 direction = normalize(path);
-	number angle = mod(atan(direction.x, direction.y) + info[3], tau) - tau / 2;
-	vec4 destination = Texel(texture, window_coords / size);
-	if (abs(angle) < info[2] / 2) {
+	number angle = atan(direction.x, direction.y);
+	number signed_angle = mod(angle + info[3], tau) - tau / 2;
+	if (abs(signed_angle) < info[2] / 2) {
+		number len = length(path);
+		vec4 destination = Texel(texture, window_coords / size);
 		number penetration_threshold;
 		if (lamp) {
 			vec2 eye_vector = window_coords - eye_location;
-			number eye_angle = mod(atan(eye_vector.x, eye_vector.y), tau) - tau / 2;
-			number angle_farness = abs(eye_angle - angle) / (tau / 2);
+			number eye_angle = atan(eye_vector.x, eye_vector.y);
+			number angle_farness = abs(mod(angle - eye_angle + tau / 2, tau) - tau / 2) / (tau / 2);
 			penetration_threshold = base_penetration_threshold * (1 - angle_farness);
 		} else {
 			penetration_threshold = base_penetration_threshold;
