@@ -52,7 +52,7 @@ local function initialisePlay(seed, recordName, loadedFrom)
 	
 	dims = {}
 	
-	local overworld = Dimension(width, height, rng, "maacian overworld", 0, 6000)
+	local overworld = Dimension(width, height, rng, "maacian overworld", 0, 1000000)
 	cameraEntity = overworld:newPlayer(rng, "male", 1, width * scale / 2, height * scale / 2, 2)
 	table.insert(dims, overworld)
 end
@@ -217,7 +217,6 @@ local function tickPlay(...)
 	-- changes can be found in tile.lua as a global. TODO: FIXME
 	for change in pairs(changes) do
 		changes[change] = nil
-		shab = shab + 1
 		local nature = change.nature
 		local tile = change.tile
 		if change.nature == takenDamage then

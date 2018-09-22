@@ -303,8 +303,10 @@ function Animal:see(viewportCanvasSetter)
 	love.graphics.setCanvas(lightCanvas)
 	local r, g, b = self.dimension:getLightLevel()
 	love.graphics.clear(r, g, b, 1)
+	vec[1], vec[2] = LaddX, LaddY
+	lightShader:send("eye_location", vec)
 	vec[3], vec[4] = tau, 0
-	lightShader:send("use_falloff", true)
+	lightShader:send("lamp", true)
 	for light in pairs(lights) do
 		local x, y = light:center()
 		x, y = selfX - x, selfY - y
@@ -314,7 +316,7 @@ function Animal:see(viewportCanvasSetter)
 		local energy = light.energy
 		love.graphics.draw(null, x - energy, y - energy, 0, energy * 2, energy * 2)
 	end
-	lightShader:send("use_falloff", false)
+	lightShader:send("lamp", false)
 	love.graphics.setCanvas(viewCanvas)
 	love.graphics.clear(0, 0, 0, 1)
 	love.graphics.setColor(1, 1, 1, 1) -- red mist for angry vision is plausible
