@@ -18,10 +18,10 @@ vec4 effect(vec4 colour, Image texture, vec2 texture_coords, vec2 window_coords)
 	if (abs(angle) < info[2] / 2) {
 		number penetration_threshold;
 		if (lamp) {
-			vec2 eye_vector = eye_location - window_coords;
+			vec2 eye_vector = window_coords - eye_location;
 			number eye_angle = mod(atan(eye_vector.x, eye_vector.y), tau) - tau / 2;
-			number angle_farness = abs(eye_angle - angle) / (tau / 4);
-			penetration_threshold = base_penetration_threshold * angle_farness;
+			number angle_farness = abs(eye_angle - angle) / (tau / 2);
+			penetration_threshold = base_penetration_threshold * (1 - angle_farness);
 		} else {
 			penetration_threshold = base_penetration_threshold;
 		}
