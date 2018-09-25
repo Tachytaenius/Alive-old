@@ -127,13 +127,14 @@ return {
 	tri = tri,
 	
 	-- non-deterministic but faster, for use in graphics
-	gfxCos = math.cos,
-	gfxSin = math.sin,
-	gfxTan = math.tan,
-	gfxAcos = math.acos,
-	gfxAsin = math.asin,
-	gfxAtan = math.atan,
-	gfxLog = math.log
+	ndCos = math.cos,
+	ndSin = math.sin,
+	ndTan = math.tan,
+	ndAcos = math.acos,
+	ndAsin = math.asin,
+	ndAtan = math.atan,
+	ndLog = math.log,
+	ndRandom = math.random
 }
 
 -- thanks for reading :-)

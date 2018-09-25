@@ -1,4 +1,4 @@
-constants = require("constants")
+local CORE, TITULAR = require("const/core"), require("const/titular")
 
 function love.conf(t)
 	t.identity = "alive"
@@ -6,8 +6,8 @@ function love.conf(t)
 	t.accelorometerjoystick = false
 	t.appendidentity = true
 	
-	t.window.title = "Alive"
+	t.window.title = TITULAR.base
 	t.window.icon = "icon.png"
-	t.window.width = constants.screenWidth
-	t.window.height = constants.screenHeight
+	t.window.width = CORE.WIDTH
+	t.window.height = CORE.HEIGHT
 end
