@@ -1,0 +1,31 @@
+{
+	"controls": {
+		"w": "forwards",
+		"a": "strafeLeft",
+		"s": "backwards",
+		"d": "strafeRight",
+		",": "turnLeft",
+		".": "turnRight",
+		"tab": "actionMenu",
+		"space": "attack",
+		"e": "use",
+		"lshift": "run",
+		"lctrl": "sneak",
+
+		"escape": "pause",
+		"f2": "takeScreenshot",
+		"f3": "toggleInfo",
+		"f9": "scaleDown",
+		"f10": "scaleUp",
+		"f11": "toggleFullscreen"
+	},
+	"graphics": {
+		"fullscreen": false,
+		"scale": 2,
+		"showPerformance": false
+	},
+	"autosave": {
+		"quit": true,
+		"load": false
+	}
+}

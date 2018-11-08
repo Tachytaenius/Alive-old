@@ -52,7 +52,7 @@ function quadreasonable.getQuad(spriteX, spriteY, spriteWidth, spriteHeight, spr
 end
 
 function quadreasonable.pregenerate()
-	
+	-- TODO
 end
 
 quadreasonable.quads = quads

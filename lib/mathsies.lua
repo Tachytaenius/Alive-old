@@ -125,6 +125,7 @@ return {
 	min = min,
 	huge = huge,
 	tri = tri,
+	smallestPositiveFloat = nil, -- TODO: ask around
 	
 	-- non-deterministic but faster, for use in graphics
 	ndCos = math.cos,

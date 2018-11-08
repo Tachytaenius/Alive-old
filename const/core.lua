@@ -1,32 +1,19 @@
-local CORE = {}
+local core = {}
 
-CORE.SPEED = 30 -- How many ticks in a second.
-CORE.SLOWNESS = 1 / CORE.SPEED -- How long a tick should be in seconds.
-CORE.FALLOFF_START = 120
-CORE.FALLOFF_END = 240
-CORE.WIDTH = 384
-CORE.HEIGHT = 256
+core.title = "Alive"
+core.identity = "alive"
 
-CORE.RECORDED, CORE.UNRECORDED = 1, 2
-CORE.INPUTS = {
-	FORWARDS = RECORDED,
-	STRAFE_LEFT = RECORDED,
-	BACKWARDS = RECORDED,
-	STRAFE_RIGHT = RECORDED,
-	TURN_LEFT = RECORDED,
-	TURN_RIGHT= RECORDED,
-	USE = RECORDED,
-	RUN = RECORDED,
-	DUCK = RECORDED,
-	SNEAK = RECORDED,
-	ACT = RECORDED,
-	
-	PAUSE = UNRECORDED,
-	TAKE_SCREENSHOT = UNRECORDED,
-	SCALE_UP = UNRECORDED,
-	SCALE_DOWN = UNRECORDED,
-	TOGGLE_FULLSCREEN = UNRECORDED,
-	TOGGLE_INFO = UNRECORDED
-}
+-- move gfx constants to const/graphics.lua
 
-return CORE
+core.speed = 24 -- How many ticks in a second.
+core.slowness = 1 / core.speed -- How long a tick should be in seconds.
+core.terrainScale = 12
+core.ditchDepth = 4 -- How many layers (terrainScale ^ 2) of a tile make up free space for dirt et cetera, and how much is for bedrock? Free space volume = terrainScale ^ 2 * ditchDepth
+core.tilePadding = 1.5
+core.pusheePenalty = 3
+core.falloffStart = 120
+core.falloffEnd = 240
+core.width = 384
+core.height = 256
+
+return core

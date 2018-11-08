@@ -1,13 +1,13 @@
-local CORE, TITULAR = require("const/core"), require("const/titular")
+local core = require("const/core")
 
 function love.conf(t)
-	t.identity = "alive"
+	t.identity = core.identity
 	t.version = "11.1"
 	t.accelorometerjoystick = false
 	t.appendidentity = true
 	
-	t.window.title = TITULAR.base
+	t.window.title = core.title
 	t.window.icon = "icon.png"
-	t.window.width = CORE.WIDTH
-	t.window.height = CORE.HEIGHT
+	t.window.width = core.width
+	t.window.height = core.height
 end

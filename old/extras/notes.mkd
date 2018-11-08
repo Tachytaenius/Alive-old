@@ -1,2 +1,0 @@
-* Make sure that the setMode defaults are still what we want the new version if the framework updates.
-* Always use table.insert and table.remove when dealing with the play state's lists to keep ipairs working (which we need because pairs isn't deterministic.)
