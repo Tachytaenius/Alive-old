@@ -39,7 +39,7 @@ return function(theme, width, height, rng, length, time)
 		tiles[x] = column
 		for y = 0, realm.height - 1 do
 			local newTile = behaviours.tile(concord.entity(), x, y, realm)
-			local topping = dirt.new(rng)
+			local topping = dirt.new(newTile, rng)
 			newTile:get(components.tile).topping = topping
 			topping:growGrass()
 			column[y] = newTile

@@ -102,11 +102,15 @@ function see:draw(canvas, targetPlayer)
 	translate(bigAddX, bigAddY)
 	setCanvas(lightInfoCanvas)
 	clear(1, 1, 1, 1)
-	for tile in pairs(occluders) do
-		setColour(0, 0, 0, 1)
-		local tpos = tile.owner:get(components.position)
-		local drawX, drawY = epos.x - tpos.x - scale / 2, epos.y - tpos.y - scale / 2
-		rectangle("fill", drawX, drawY, scale, scale)
+	for occluder in pairs(occluders) do
+		local occluderInfo = occluder.bag.occluderInfo
+		setColour(occluderInfo.r, occluderInfo.g, occluderInfo.b, 1)
+		local opos = occluder.owner:get(components.position)
+		local drawX, drawY = epos.x - opos.x * 2, epos.y - opos.y * 2
+		love.graphics.push()
+		love.graphics.translate(drawX, drawY)
+		occluder:draw("fill")
+		love.graphics.pop()
 	end
 	setShader(lightShader)
 	setBlendMode("add")

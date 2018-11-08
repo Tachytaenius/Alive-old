@@ -26,6 +26,5 @@ return {
 	integrity = require(path .. "integrity"),
 	damageable = require(path .. "damageable"),
 	life = require(path .. "life"),
-	death = require(path .. "death"),
-	grass = require(path .. "grass")
+	death = require(path .. "death")
 }

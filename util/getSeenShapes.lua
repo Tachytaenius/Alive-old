@@ -17,8 +17,10 @@ return function(e, collider)
 					seenCircle[k] = nil
 				else
 					tiles[k] = true
-					local topping = k.bag.topping
-					if topping and topping.blocksLight then occluders[k] = true end
+				end
+				local occluderInfo = k.bag.occluderInfo
+				if occluderInfo and occluderInfo.r < 1 and occluderInfo.g < 1 and occluderInfo.b < 1 then
+					occluders[k] = true
 					seenCircle[k] = nil
 				end
 			end
@@ -33,17 +35,20 @@ return function(e, collider)
 				mobs[k] = true
 			else
 				tiles[k] = true
-				local topping = k.bag.topping
-				if topping and topping.blocksLight then occluders[k] = true end
+			end
+			if occluderInfo and occluderInfo.r < 1 and occluderInfo.g < 1 and occluderInfo.b < 1 then
+				occluders[k] = true
+				seenCircle[k] = nil
 			end
 		end
 	end
 	
 	for light in pairs(lights) do
-		local newOccluders = collider:collisions(light)
-		for occluder in pairs(newOccluders) do
-			if occluder.owner and not occluder.owner:has(components.mob) and occluder.bag.blocksLight then
-				occluders[occluder] = true
+		local potentialNewOccluders = collider:collisions(light)
+		for potentialOccluder in pairs(potentialNewOccluders) do
+			local occluderInfo = potentialOccluder.bag.occluderInfo
+			if occluderInfo and occluderInfo.r < 1 and occluderInfo.g < 1 and occluderInfo.b < 1 then
+				occluders[potentialOccluder] = true
 			end
 		end
 	end

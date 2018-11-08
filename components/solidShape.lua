@@ -1,7 +1,7 @@
 local concord = require("lib.concord")
 
 return concord.component(
-	function(e, size, collider, immovability, shape, clip, owner, x, y)
+	function(e, size, collider, immovability, shape, clip, owner, x, y, r, g, b)
 		if shape == "circle" then
 			e.shape = collider:circle(x, y, size)
 		elseif shape == "square" then
@@ -13,6 +13,8 @@ return concord.component(
 		e.shape.owner = owner
 		e.shape.bag = e
 		e.clip = clip
-		e.blocksLight = clip
+		if r or g or b then
+			e.occluderInfo = {r or 1, g or 1, b or 1}
+		end
 	end
 )

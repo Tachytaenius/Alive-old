@@ -6,7 +6,7 @@ return concord.component(
 		-- effortRequired is the amount of extertion units per tick
 		e.cost = effortRequired
 		e.timeRequired = timeRequired
-		e.state = toggled and timeRequired or 0
+		e.state = toggled and timeRequired or -timeRequired
 		e.maxImpact = 1
 		e.toggling = toggled and 1 or -1
 	end

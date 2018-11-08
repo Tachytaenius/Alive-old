@@ -1,4 +1,6 @@
 local core = require("const.core")
+local components = require("components")
+local materials = require("materials")
 local assets = require("assets")
 
 local grass = {}
@@ -14,8 +16,10 @@ function grass:updateDrawFields()
 	self.noiseInfo[4] = self.health * 0.5 + 0.6
 end
 
-function grass.new(water)
+function grass.new(owner)
 	local new = {}
+	new.owner = owner
+	local water = owner.constituents[materials.byName.water] / (core.terrainScale ^ 2 * core.ditchDepth)
 	new.health = water
 	new.noiseInfo = {}
 	new.updateDrawFields = grass.updateDrawFields
