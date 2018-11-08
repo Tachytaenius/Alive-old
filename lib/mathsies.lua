@@ -10,7 +10,7 @@ local sqrt, abs, floor, ceil, min, max, huge = math.sqrt, math.abs, math.floor, 
 local function sin(x)
 	local over = floor(x / (tau/2)) % 2 == 0 -- Is the sinusoid over or under at this x?
 	x = abs(x) % (tau/2) -- Boil it down to what matters
-	local absolute = (32*x*(tau-2*x))/(5*tau^2+16*x^2-8*tau*x) -- Bhāskara I's sine approximation in terms of Tau.
+	local absolute = (32*x*(tau-2*x))/(5*tau^2+16*x^2-8*tau*x) -- Bhāskara I's sine approximation in terms of tau.
 	return over and absolute or -absolute
 end
 
@@ -125,7 +125,6 @@ return {
 	min = min,
 	huge = huge,
 	tri = tri,
-	smallestPositiveFloat = nil, -- TODO: ask around
 	
 	-- non-deterministic but faster, for use in graphics
 	ndCos = math.cos,

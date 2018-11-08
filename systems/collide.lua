@@ -51,7 +51,7 @@ function collide:update()
 					local vx, vy = vector.x, vector.y
 					if e:get(components.position).x == other.owner:get(components.position).x and e:get(components.position).y == other.owner:get(components.position).y then
 						rng:setState("0x" .. string.format("%x", (tonumber(string.sub(state, 3), 16) + 4096 * indices[other.owner]) % 2 ^ 53))
-						local angle = rng:random() * math.tau - (math.smallestPositiveFloat or 0) -- TODO: make smallestPositiveFloat in mathsies
+						local angle = rng:random() * math.tau  -- random should be in [0, 1)
 					 	local distance = math.sqrt(vx ^ 2 + vy ^ 2)
 						vx, vy = math.polarToCartesian(distance, angle)
 					end
