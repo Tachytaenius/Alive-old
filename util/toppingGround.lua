@@ -3,13 +3,13 @@ local materials = require("materials")
 local assets = require("assets")
 local grass = require("util.superToppingGrass")
 
-local dirt = {}
+local ground = {}
 
-function dirt:growGrass()
+function ground:growGrass()
 	self.superTopping = grass.new(self)
 end
 
-function dirt:updateDrawFields()
+function ground:updateDrawFields()
 	local r, g, b, a, noisiness, contrast, brightness = 0, 0, 0, 0, 0, 0, 0
 	local div = 0
 	for material, quantity in pairs(self.constituents) do
@@ -35,30 +35,17 @@ function dirt:updateDrawFields()
 	self.noiseInfo[3] = brightness / div
 	self.noiseInfo[4] = 1
 	
-	--[[ if dirt was a tall boi
-	-- supertoppings work on occluder info bearing in mind that toppings have set it beforehand; toppings update their draw fields first.
-	local solidShape = self.owner.owner:get(components.solidShape)
-	if self.noiseInfo[4] >= 0.95 then
-		if not solidShape.occluderInfo then
-			solidShape.occluderInfo = {r = 1, g = 1, b = 1}
-		end
-		local occluderInfo = solidShape.occluderInfo
-		occluderInfo.r, occluderInfo.g, occluderInfo.b = occluderInfo.r - 1, occluderInfo.g - 1, occluderInfo.b - 1
-	elseif solidShape.occluderInfo then
-		solidShape.occluderInfo.r, solidShape.occluderInfo.g, solidShape.occluderInfo.b = 1, 1, 1
-	end]]
-	
 	if self.superTopping then self.superTopping:updateDrawFields() end
 end
 
-function dirt.new(tile, rng)
+function ground.new(tile, category, rng)
 	local new = {}
 	new.owner = tile
 	-- TODO: not so random
 	local constituents = {}
 	local volume = core.terrainScale ^ 2 * core.ditchDepth * (rng:random() * 0.1 + 0.8)
 	local total = 0
-	for _, material in ipairs(materials.categories.loam) do
+	for _, material in ipairs(category) do
 		local quantity = rng:random() * material.abundance
 		total = total + quantity
 		constituents[material] = quantity
@@ -77,11 +64,11 @@ function dirt.new(tile, rng)
 	new.constituents = constituents
 	new.total = total2
 	new.noiseInfo = {}
-	new.growGrass = dirt.growGrass
-	new.updateDrawFields = dirt.updateDrawFields
+	new.growGrass = ground.growGrass
+	new.updateDrawFields = ground.updateDrawFields
 	new.texture = assets.images.arrangements.base
 	new:updateDrawFields()
 	return new
 end
 
-return dirt
+return ground

@@ -5,7 +5,9 @@ local behaviours = require("behaviours")
 local hc = require("lib.hc")
 local reregisterShapes, unregisterShapes = require("util.reregisterShapes"), require("util.unregisterShapes")
 local core = require("const.core")
-local dirt = require("util.toppingDirt")
+local ground = require("util.toppingGround")
+local block = require("util.superToppingBlock")
+local materials = require("materials")
 
 return function(theme, width, height, rng, length, time)
 	length = length or core.speed * 60 * 60 -- an hour
@@ -39,9 +41,13 @@ return function(theme, width, height, rng, length, time)
 		tiles[x] = column
 		for y = 0, realm.height - 1 do
 			local newTile = behaviours.tile(concord.entity(), x, y, realm)
-			local topping = dirt.new(newTile, rng)
+			local topping = ground.new(newTile, materials.categories.loam, rng)
 			newTile:get(components.tile).topping = topping
-			topping:growGrass()
+			if rng:random() >= 0.03125 then
+				topping:growGrass()
+			else
+				topping.superTopping = block.new(topping, materials.categories.rock, rng)
+			end
 			column[y] = newTile
 			-- realm:addEntity(newTile)
 		end

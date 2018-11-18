@@ -76,7 +76,7 @@ function see:draw(canvas, targetPlayer)
 	for i = 1, self.pool.size do
 		local _e = self.pool:get(i)
 		local player = _e:get(components.camera).player
-		if targetPlayer == player then
+		if targetPlayer == player then -- TODO: Just "if targetPlayer is in pool"
 			e = _e
 			break
 		end
@@ -109,7 +109,12 @@ function see:draw(canvas, targetPlayer)
 		local drawX, drawY = epos.x - opos.x * 2, epos.y - opos.y * 2
 		love.graphics.push()
 		love.graphics.translate(drawX, drawY)
-		occluder:draw("fill")
+		local texture = occluderInfo.texture.value
+		if texture then
+			love.graphics.draw(texture, opos.x - texture:getWidth() / 2, opos.y - texture:getHeight() / 2)
+		else
+			occluder:draw("fill")
+		end
 		love.graphics.pop()
 	end
 	setShader(lightShader)

@@ -20,6 +20,7 @@ function build:update()
 			if tiles[x] and tiles[x][y] then buildRequests[tiles[x][y]] = buildRequests[tiles[x][y]] and "conflict" or e end
 		end
 	end
+	local tilesToUpdateDrawFields = {}
 	for tile, requester in pairs(buildRequests) do
 		if requester ~= "conflict" then
 			
