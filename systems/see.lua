@@ -70,12 +70,12 @@ end
 
 -- TODO: Consider replacing use of vec with use of premade tables wherever possible
 
-function see:draw(canvas, targetPlayer)
+function see:draw(targetPlayer, canvas)
 	if not targetPlayer then return end
 	local e
 	for i = 1, self.pool.size do
 		local _e = self.pool:get(i)
-		local player = _e:get(components.camera).player
+		local player = _e:has(components.camera) and _e:get(components.camera).player
 		if targetPlayer == player then -- TODO: Just "if targetPlayer is in pool"
 			e = _e
 			break
@@ -214,7 +214,7 @@ function see:draw(canvas, targetPlayer)
 			local sprite = entity:get(components.sprite)
 			local screenX, screenY, angle = lookAt(e, entity)
 			local quad = getQuad(entity, angle)
-			draw(sprite.image, quad, screenX, screenY)
+			draw(sprite.image.value, quad, screenX, screenY)
 		end
 	end
 	if e:has(components.sprite) then

@@ -1,4 +1,5 @@
 love.graphics.setDefaultFilter("nearest", "nearest", 0)
+love.graphics.setLineStyle("rough")
 
 math = require("lib.mathsies")
 local concord = require("lib.concord").init()

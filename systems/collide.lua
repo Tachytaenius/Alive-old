@@ -124,21 +124,21 @@ function collide:update()
 			end
 			
 			local damage = (rng:random() * 0.25 + 0.75) * rightStrength * (1 - currentDistance / reach)
+			local metabolism = e:get(components.metabolism)
+			if metabolism then
+				metabolism.exertion = metabolism.exertion + math.min(reach, currentDistance) / 400
+			end
 			local knockX, knockY = dx / reach * math.abs(reach - currentDistance), dy / reach * math.abs(reach - currentDistance)
 			for punchable in pairs(punched) do
 				if punchable.owner:has(components.mob) then
-					local damagable = punchable.owner:get(components.damageable)
-					if damagable then
-						damagable.current = damagable.current + damage / shapeCount
-					end
 					local integrity = punchable.owner:get(components.integrity)
 					if integrity then
-						integrity.current = integrity.current - damage
+						integrity.current = math.max(integrity.current - damage / shapeCount, 0)
 					end
 					xShifts[punchable.owner] = xShifts[punchable.owner] and xShifts[punchable.owner] + knockX / punchable.bag.immovability or knockX / punchable.bag.immovability
 					yShifts[punchable.owner] = yShifts[punchable.owner] and yShifts[punchable.owner] + knockY / punchable.bag.immovability or knockY / punchable.bag.immovability
 				else
-					local wall = punchable.owner:get(components.wall)
+					local wall = punchable.owner:get(components.tile).topping.superTopping
 					-- TODO: fling constituents out of the wall
 				end
 			end

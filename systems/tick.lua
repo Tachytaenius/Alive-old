@@ -1,6 +1,6 @@
 local concord = require("lib.concord")
 local components = require("components")
-local tick = concord.system({"beards", components.life, components.beard}, {"blinkers", components.life, components.blink}, {"walkers", components.actor, components.pose}, {"outfitTogglers", components.toggleOutfit}, {"objects", components.integrity}, {"mortals", components.life}, {"corpses", components.death})
+local tick = concord.system({"beards", components.life, components.beard}, {"blinkers", components.life, components.blink}, {"walkers", components.actor, components.pose, components.life}, {"outfitTogglers", components.life, components.toggleOutfit}, {"corpses", components.rot})
 
 function tick:update()
 	local rng = self:getInstance().rng
@@ -10,11 +10,13 @@ function tick:update()
 		beard.current = math.min(beard.current + 1, beard.maximum)
 		if beard.current == beard.maximum then beard.impact = 1 else beard.impact = 0 end
 	end
+	
 	for i = 1, self.blinkers.size do
 		local blink = self.blinkers:get(i):get(components.blink)
 		blink.current = (blink.current + 1) % blink.speed * blink.modifier
 		if blink.current < blink.length / blink.modifier then blink.impact = 1 else blink.impact = 0 end
 	end
+	
 	for i = 1, self.walkers.size do
 		local e = self.walkers:get(i)
 		local actor, pose = e:get(components.actor), e:get(components.pose)
@@ -27,10 +29,11 @@ function tick:update()
 				pose.moved = false
 				pose.walkTimer = 0
 				pose.current = "stand"
-				pose.impact = pose.byName["stand"]
+				pose.impact = pose.byName.stand
 			end
 		end
 	end
+	
 	for i = 1, self.outfitTogglers.size do
 		local e = self.outfitTogglers:get(i)
 		local toggleOutfit = e:get(components.toggleOutfit)
@@ -44,37 +47,10 @@ function tick:update()
 		toggleOutfit.state = math.min(math.max(-toggleOutfit.timeRequired / 2, toggleOutfit.state + toggleOutfit.toggling), toggleOutfit.timeRequired / 2)
 	end
 	
-	for i = 1, self.objects.size do
-		local e = self.objects:get(i)
-		local integrity = e:get(components.integrity)
-		integity.current = math.max(integrity.current, 0)
-		local broken = integrity.current == 0 and true or false
-		
-		integrity.broken = broken
-		
-		local light = e:get(components.light)
-		if light then
-			light.on = not broken
-		end
-	end
-	
-	for i = 1, self.mortals.size do
-		local e = self.mortals:get(i)
-		local damage = e:get(components.damageable)
-		if damage.current > damage.endurance then -- TODO: make it more complex, yeah?
-			local pose = e:get(components.pose)
-			if pose then
-				local choices = pose.deaths and pose.deaths[damage[type]]
-				if choices then
-					pose.current = choices[rng:random(#choices)]
-				end
-			end
-			local blink = e:get(components.blink)
-			if blink then
-				blink.current, blink.impact = 0, 1
-			end
-			e:remove(components.life):give(components.death):apply()
-		end
+	for i = 1, self.corpses.size do
+		local e = self.corpses:get(i)
+		local rot = e:get(components.rot)
+		rot.current = math.min(rot.current + rot.speed, rot.stages)
 	end
 end
 

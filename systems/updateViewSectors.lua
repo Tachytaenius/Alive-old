@@ -4,7 +4,7 @@ local updateViewSectors = concord.system({"forDrawing", components.viewSector, c
 
 local insert, tau, cos, sin = table.insert, math.tau, math.cos, math.sin
 local function generate(e, collider)
-	local viewSector = e:get(components.viewSector)
+	local viewSector = e:get(components.viewSector, components.life)
 	local vertices = {}
 	viewSector.vertices = vertices
 	

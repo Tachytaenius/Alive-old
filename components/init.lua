@@ -24,7 +24,8 @@ return {
 	puncher = require(path .. "puncher"),
 	light = require(path .. "light"),
 	integrity = require(path .. "integrity"),
-	damageable = require(path .. "damageable"),
+	metabolism = require(path .. "metabolism"),
+	rot = require(path .. "rot"),
 	life = require(path .. "life"),
-	death = require(path .. "death")
+	HUD = require(path .. "HUD")
 }

@@ -6,7 +6,7 @@ extern vec4 info; // draw x, draw y, fov, angle
 extern vec2 eyeLocation;
 extern Image occluders;
 extern bool lamp; // lamp or view?
-const number basePenetrationThreshold = 11;
+const number basePenetrationThreshold = 8;
 const number tau = 6.28318530717958647692;
 const vec2 size = vec2(1024, 1024);
 vec4 effect(vec4 colour, Image texture, vec2 textureCoords, vec2 windowCoords) {

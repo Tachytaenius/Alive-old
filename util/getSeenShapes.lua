@@ -8,7 +8,7 @@ return function(e, collider)
 	if e:has(components.viewSector) then
 		local seenSector = collider:collisions(e:get(components.viewSector).shape)
 		for k in pairs(seenSector) do
-			if k.emitter then
+			if k.emitter and not k.light then
 				lights[k] = true
 				seenCircle[k] = nil
 			elseif k.owner then
@@ -28,7 +28,7 @@ return function(e, collider)
 	end
 	
 	for k in pairs(seenCircle) do
-		if k.emitter then
+		if k.emitter and not k.light then
 			lights[k] = true
 		elseif k.owner then
 			if k.owner:has(components.mob) then

@@ -9,5 +9,8 @@ return {
 	see = require(path .. "see"),
 	clean = require(path .. "clean"),
 	tick = require(path .. "tick"),
-	build = require(path .. "build")
+	build = require(path .. "build"),
+	checkDeaths = require(path .. "checkDeaths"),
+	tickMetabolisms = require(path .. "tickMetabolisms"),
+	renderHUD = require(path .. "renderHUD")
 }

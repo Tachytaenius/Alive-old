@@ -1,7 +1,7 @@
 local concord = require("lib.concord")
 local components = require("components")
 local updateShapes = require("util.updateShapes")
-local move = concord.system({components.actor, components.position, components.mob})
+local move = concord.system({components.actor, components.position, components.mob, components.life})
 
 function move:update()
 	for i = 1, self.pool.size do
@@ -20,6 +20,10 @@ function move:update()
 		local yMove = (actions.x * s + actions.y * c)
 		position.x, position.y = position.x + xMove, position.y + yMove
 		
+		local metabolism = e:get(components.metabolism)
+		if metabolism then
+			metabolism.exertion = metabolism.exertion + math.sqrt(xMove ^ 2 + yMove ^ 2) / 4000 + math.abs(actions.theta) / 2000
+		end
 		updateShapes(e)
 	end
 end

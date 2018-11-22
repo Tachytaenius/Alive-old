@@ -56,7 +56,7 @@ end
 
 function play:draw()
 	for _, realm in ipairs(self.realms) do
-		realm:emit("draw", self.canvas, self.thisClient)
+		realm:emit("draw", self.thisClient, self.canvas)
 	end
 end
 

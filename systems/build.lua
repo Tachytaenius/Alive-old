@@ -3,7 +3,7 @@ local components = require("components")
 local behaviours = require("behaviours")
 local core = require("const.core")
 local updateReach = require("util.updateReach")
-local build = concord.system({"builders", components.actor, components.reach, components.heldChunk})
+local build = concord.system({"builders", components.actor, components.reach, components.heldChunk, components.life})
 
 function build:update()
 	local instance = self:getInstance()

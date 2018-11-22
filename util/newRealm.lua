@@ -56,7 +56,8 @@ return function(theme, width, height, rng, length, time)
 	realm.tiles = tiles
 	local temp = behaviours.femaleHuman(concord.entity(), 1536, 1536, 0, realm)
 	temp:get(components.actor).player = "aliveplayer"
-	temp:give(components.camera, "aliveplayer")
+	local temp2 = behaviours.maleHuman(concord.entity(), 1536, 1536, 0, realm)
+	temp2:give(components.camera, "aliveplayer"):apply()
 	realm
 		:addSystem(systems.preact(), "update")
 		:addSystem(systems.clean(), "update")
@@ -65,8 +66,12 @@ return function(theme, width, height, rng, length, time)
 		:addSystem(systems.move(), "update")
 		:addSystem(systems.collide(), "update")
 		:addSystem(systems.tick(), "update")
+		:addSystem(systems.tickMetabolisms(), "update")
+		:addSystem(systems.checkDeaths(), "update")
 		:addSystem(systems.updateViewSectors(), "update")
 		:addSystem(systems.see(), "draw")
+		:addSystem(systems.renderHUD(), "draw")
 		:addEntity(temp)
+		:addEntity(temp2)
 	return realm
 end

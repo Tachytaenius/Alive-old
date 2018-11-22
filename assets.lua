@@ -8,6 +8,9 @@ local assets = {
 		texture = {load = function(self) self.value = love.graphics.newShader("resources/shaders/texture.glsl") end}
 	},
 	images = {
+		HUD = {
+			integrity = {load = function(self) self.value = love.graphics.newImage("resources/images/HUD/integrity.png") end}
+		},
 		misc = {
 			font = {load = function(self) self.value = love.graphics.newImageFont("resources/images/misc/font.png", " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.!?$,#@~:;-{}|&()<>'[]^£%/\\*0123456789") end},
 			crosshairs = {load = function(self) self.value = love.graphics.newImage("resources/images/misc/crosshairs.png") end},
