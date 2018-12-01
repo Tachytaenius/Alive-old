@@ -7,7 +7,7 @@ core.identity = "alive"
 
 core.speed = 24 -- How many ticks in a second.
 core.slowness = 1 / core.speed -- How long a tick should be in seconds.
-core.terrainScale = 12
+core.terrainScale = 16
 core.ditchDepth = 4 -- How many layers (terrainScale ^ 2) of a tile make up free space for ground et cetera, and how much is for bedrock? Free space volume = terrainScale ^ 2 * ditchDepth
 core.tilePadding = 1.5
 core.pusheePenalty = 3

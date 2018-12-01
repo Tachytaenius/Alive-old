@@ -101,7 +101,7 @@ function see:draw(targetPlayer, canvas)
 	
 	translate(bigAddX, bigAddY)
 	setCanvas(lightInfoCanvas)
-	clear(1, 1, 1, 1)
+	clear(1, 1, 1, 0)
 	for occluder in pairs(occluders) do
 		local occluderInfo = occluder.bag.occluderInfo
 		setColour(occluderInfo.r, occluderInfo.g, occluderInfo.b, 1)
@@ -109,12 +109,8 @@ function see:draw(targetPlayer, canvas)
 		local drawX, drawY = epos.x - opos.x * 2, epos.y - opos.y * 2
 		love.graphics.push()
 		love.graphics.translate(drawX, drawY)
-		local texture = occluderInfo.texture.value
-		if texture then
-			love.graphics.draw(texture, opos.x - texture:getWidth() / 2, opos.y - texture:getHeight() / 2)
-		else
-			occluder:draw("fill")
-		end
+		occluder = occluder.bag.forRays or occluder
+		occluder:draw("fill")
 		love.graphics.pop()
 	end
 	setShader(lightShader)
@@ -157,7 +153,6 @@ function see:draw(targetPlayer, canvas)
 	origin()
 	translate(viewportAddX, viewportAddY)
 	rotate(-epos.theta)
-	setShader()
 	setCanvas(canvas)
 	setShader(textureShader)
 	clear(0, 0, 0, 1)
@@ -225,6 +220,8 @@ function see:draw(targetPlayer, canvas)
 	setShader(fragmentFalloffShader)
 	vec[1], vec[2], vec[3], vec[4] = bigAddX, bigAddY, falloffStart, power
 	fragmentFalloffShader:send("info", vec)
+	vec[1], vec[2] = 2, 2
+	fragmentFalloffShader:send("blur", true)
 	setColour(1, 1, 1, 1)
 	setBlendMode("multiply", "premultiplied")
 	draw(lightCanvas, viewportAddX, viewportAddY, -epos.theta, 1, 1, bigAddX, bigAddY)

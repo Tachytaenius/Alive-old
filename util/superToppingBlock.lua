@@ -33,10 +33,9 @@ function block:updateDrawFields()
 	
 	local solidShape = self.owner.owner:get(components.solidShape)
 	local transparency = 1 - a / div
-	if not solidShape.occluderInfo then
-		solidShape.occluderInfo = {r = r / div * transparency, g = g / div * transparency, b = b / div * transparency}
-	end
-	solidShape.occluderInfo.r, solidShape.occluderInfo.g, solidShape.occluderInfo.b = r / div * transparency, g / div * transparency, b / div * transparency
+	local r, g, b = r / div * transparency, g / div * transparency, b / div * transparency
+	solidShape.occluderInfo = solidShape.occluderInfo or {}
+	solidShape.occluderInfo.r, solidShape.occluderInfo.g, solidShape.occluderInfo.b = r, g, b
 end
 
 function block.new(topping, category, rng)

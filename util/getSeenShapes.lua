@@ -19,7 +19,7 @@ return function(e, collider)
 					tiles[k] = true
 				end
 				local occluderInfo = k.bag.occluderInfo
-				if occluderInfo and occluderInfo.r < 1 and occluderInfo.g < 1 and occluderInfo.b < 1 then
+				if occluderInfo and not (occluderInfo.r == 1 and occluderInfo.g == 1 and occluderInfo.b == 1) then
 					occluders[k] = true
 					seenCircle[k] = nil
 				end
@@ -36,7 +36,7 @@ return function(e, collider)
 			else
 				tiles[k] = true
 			end
-			if occluderInfo and occluderInfo.r < 1 and occluderInfo.g < 1 and occluderInfo.b < 1 then
+			if occluderInfo and not (occluderInfo.r == 1 and occluderInfo.g == 1 and occluderInfo.b == 1) then
 				occluders[k] = true
 				seenCircle[k] = nil
 			end
@@ -46,8 +46,8 @@ return function(e, collider)
 	for light in pairs(lights) do
 		local potentialNewOccluders = collider:collisions(light)
 		for potentialOccluder in pairs(potentialNewOccluders) do
-			local occluderInfo = potentialOccluder.bag.occluderInfo
-			if occluderInfo and occluderInfo.r < 1 and occluderInfo.g < 1 and occluderInfo.b < 1 then
+			local occluderInfo = potentialOccluder.bag and potentialOccluder.bag.occluderInfo
+			if occluderInfo and not (occluderInfo.r == 1 and occluderInfo.g == 1 and occluderInfo.b == 1) then
 				occluders[potentialOccluder] = true
 			end
 		end

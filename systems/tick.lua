@@ -3,7 +3,9 @@ local components = require("components")
 local tick = concord.system({"beards", components.life, components.beard}, {"blinkers", components.life, components.blink}, {"walkers", components.actor, components.pose, components.life}, {"outfitTogglers", components.life, components.toggleOutfit}, {"corpses", components.rot})
 
 function tick:update()
-	local rng = self:getInstance().rng
+	local instance = self:getInstance()
+	local rng = instance.rng
+	instance.time = (instance.time + 1) % instance.dayLength
 	
 	for i = 1, self.beards.size do
 		local beard = self.beards:get(i):get(components.beard)

@@ -107,8 +107,10 @@ function collide:update()
 					local rayParameters = shape:intersectionsWithRay(epos.x, epos.y, dx, dy)
 					local distance = math.huge
 					for _, v in pairs(rayParameters) do
-						v = v * reach
-						distance = v < distance and v or distance
+						if v >= 0 and v <= 1 then
+							v = v * reach
+							distance = v < distance and v or distance
+						end
 					end
 					if distance then
 						if distance < currentDistance then

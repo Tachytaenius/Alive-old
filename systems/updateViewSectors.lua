@@ -1,12 +1,10 @@
 local concord = require("lib.concord")
 local components = require("components")
-local updateViewSectors = concord.system({"forDrawing", components.viewSector, components.camera}, {"forThinking", components.viewSector, components.ai, components.actor})
+local updateViewSectors = concord.system({components.viewSector})
 
 local insert, tau, cos, sin = table.insert, math.tau, math.cos, math.sin
-local function generate(e, collider)
-	local viewSector = e:get(components.viewSector, components.life)
+local function generate(e, collider, viewSector)
 	local vertices = {}
-	viewSector.vertices = vertices
 	
 	local falloff = viewSector.falloff
 	local angle = viewSector.fov
@@ -18,40 +16,32 @@ local function generate(e, collider)
 		insert(vertices, falloff * sin(theta + tau/4))
 	end
 	
+	if viewSector.shape then collider:remove(viewSector.shape) end
+	viewSector.shape = collider:polygon(unpack(vertices))
+	viewSector.basePolygon = viewSector.shape._polygon
 	viewSector.currentFalloff, viewSector.currentFov = falloff, angle -- Yes, we're up to date.
 end
 
-local function update(e, collider)
+local function update(e, collider, viewSector)
 	local epos = e:get(components.position)
-	local viewSector = e:get(components.viewSector)
-	if viewSector.shape then collider:remove(viewSector.shape) end
-	local sector = collider:polygon(unpack(viewSector.vertices))
-	sector:move(epos.x, epos.y)
-	sector:rotate(epos.theta + math.tau / 2, epos.x, epos.y)
-	viewSector.shape = sector
+	viewSector.shape._polygon = viewSector.basePolygon:clone()
+	viewSector.shape:move(epos.x, epos.y)
+	viewSector.shape:rotate(epos.theta + math.tau / 2, epos.x, epos.y)
 end
 
 function updateViewSectors:update()
 	local collider = self:getInstance().collider
-	local updatedBecauseCamera = {}
-	for i = 1, self.forDrawing.size do
-		local e = self.forDrawing:get(i)
+	for i = 1, self.pool.size do
+		local e = self.pool:get(i)
 		local viewSector = e:get(components.viewSector)
-		if not viewSector.baseShape or not (viewSector.currentFalloff == viewSector.falloff and viewSector.currentFov == viewSector.fov) then
-			generate(e, collider)
-			updatedBecauseCamera[e] = true
-		end
-		update(e, collider)
-	end
-	for i = 1, self.forThinking.size do
-		local e = self.forThinking:get(i)
-		if not updatedBecauseCamera[e] then
-			local ai = e:get(components.ai)
-			local viewSector = e:get(components.viewSector)
-			if ai and ai.active and (ai.following or ai.pathfinding) or not (viewSector.currentFalloff == viewSector.falloff and viewSector.currentFov == viewSector.fov) then
-				generate(e, collider)
-				update(e, collider)
+		local ai = e:get(components.ai)
+		local updateForDraw = e:has(components.camera)
+		local updateForThink = ai and ai.active and (ai.following or ai.pathfinding)
+		if updateForDraw or updateForThink then
+			if not (viewSector.currentFalloff == viewSector.falloff and viewSector.currentFov == viewSector.fov) or not viewSector.basePolygon then
+				generate(e, collider, viewSector)
 			end
+			update(e, collider, viewSector)
 		end
 	end
 end

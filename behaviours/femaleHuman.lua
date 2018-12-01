@@ -5,7 +5,7 @@ local assets = require("assets")
 return function(e, x, y, theta, instance)
 	return e
 		:give(components.position, x, y, theta)
-		:give(components.solidShape, 4, instance.collider, 4, "circle", true, e, x, y)
+		:give(components.solidShape, 3.9, true, e, instance.collider:circle(x, y, 3.9))
 		:give(components.integrity, 9.5)
 		:give(components.tiredness, 9)
 		:give(components.life)
