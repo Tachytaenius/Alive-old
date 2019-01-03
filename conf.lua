@@ -1,4 +1,4 @@
-local core = require("const/core")
+local core = require("const.core")
 
 function love.conf(t)
 	t.identity = core.identity

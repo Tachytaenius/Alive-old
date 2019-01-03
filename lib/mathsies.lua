@@ -6,25 +6,12 @@ local metadata = {
 		MIT License
 		
 		Copyright (c) 2018 Henry Fleminger Thomson
+		
+		Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+		
+		The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-        Permission is hereby granted, free of charge, to any person obtaining a
-        copy of this software and associated documentation files (the
-        "Software"), to deal in the Software without restriction, including
-        without limitation the rights to use, copy, modify, merge, publish,
-        distribute, sublicense, and/or sell copies of the Software, and to
-        permit persons to whom the Software is furnished to do so, subject to
-        the following conditions:
-
-        The above copyright notice and this permission notice shall be included
-        in all copies or substantial portions of the Software.
-        
-        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-        OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-        MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-        IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-        CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-        TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-        SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+		THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 	]]
 }
 
@@ -100,18 +87,11 @@ local function round(x, y)
 end
 
 local function sgn(x)
-	if x > 0 then 
-		return 1
-	elseif x == 0 then 
-		return 0
-	else
-		-- Did you hear about the mathematician who was afraid of negative numbers?
-		-- He'd stop at nothing to avoid them.
-		return -1
-		
-		-- Did you laugh at that? I hope you didn't, because zero is a number; the empty set is when things get nothingy.
-		-- "Zero is the cardinality of nothing, therefore zero is nothing." As if.
-	end
+	-- Did you hear about the mathematician who was afraid of negative numbers?
+	-- He'd stop at nothing to avoid them.
+	return x == 0 and 0 or abs(x) / x
+	-- Did you laugh at that? I hope you didn't, because zero is a number; the empty set is when things get nothingy.
+	-- "Zero is the cardinality of nothing, therefore zero is nothing." As if.
 end
 
 local function isInteger(x)
@@ -146,7 +126,15 @@ local function tri(x)
 end
 
 local function finite(x)
-	return x == x and abs(x) < huge
+	return x == x and abs(x) ~= huge
+end
+
+local function isNan(x)
+	return x ~= x
+end
+
+local function isInfinite(x)
+	return abs(x) == huge
 end
 
 return {

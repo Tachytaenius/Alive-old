@@ -46,6 +46,8 @@ local bigWidth, bigHeight = 1024, 1024
 local lightInfoCanvas = newCanvas(bigWidth, bigHeight)
 local lightCanvas = newCanvas(bigWidth, bigHeight)
 local viewCanvas = newCanvas(bigWidth, bigHeight)
+local erosionCanvas = newCanvas(core.width, core.height)
+erosionCanvas:setFilter("linear", "linear")
 local crosshairs = assets.images.misc.crosshairs
 
 local vec = {}
@@ -83,8 +85,8 @@ function see:draw(targetPlayer, canvas)
 	end
 	if not e then return end
 	local textureShader = assets.shaders.texture.value
-	local fragmentFalloffShader = assets.shaders.falloff.value
 	local lightShader = assets.shaders.light.value
+	local fragmentFalloffShader = assets.shaders.falloff.value
 	local instance = self:getInstance()
 	local collider = instance.collider
 	local seenShapes = e:get(components.seenShapes)
@@ -104,7 +106,7 @@ function see:draw(targetPlayer, canvas)
 	clear(1, 1, 1, 0)
 	for occluder in pairs(occluders) do
 		local occluderInfo = occluder.bag.occluderInfo
-		setColour(occluderInfo.r, occluderInfo.g, occluderInfo.b, 1)
+		setColour(occluderInfo.r, occluderInfo.g, occluderInfo.b, occluderInfo.on and 1 or 0)
 		local opos = occluder.owner:get(components.position)
 		local drawX, drawY = epos.x - opos.x * 2, epos.y - opos.y * 2
 		love.graphics.push()
@@ -113,8 +115,8 @@ function see:draw(targetPlayer, canvas)
 		occluder:draw("fill")
 		love.graphics.pop()
 	end
-	setShader(lightShader)
 	setBlendMode("add")
+	setShader(lightShader)
 	lightShader:send("occluders", lightInfoCanvas)
 	setCanvas(lightCanvas)
 	local r, g, b = instance:getLightLevel()
@@ -221,11 +223,15 @@ function see:draw(targetPlayer, canvas)
 	vec[1], vec[2], vec[3], vec[4] = bigAddX, bigAddY, falloffStart, power
 	fragmentFalloffShader:send("info", vec)
 	vec[1], vec[2] = 2, 2
-	fragmentFalloffShader:send("blur", true)
 	setColour(1, 1, 1, 1)
+	setCanvas(erosionCanvas)
+	clear(1, 1, 1, 1)
 	setBlendMode("multiply", "premultiplied")
 	draw(lightCanvas, viewportAddX, viewportAddY, -epos.theta, 1, 1, bigAddX, bigAddY)
 	draw(viewCanvas, viewportAddX, viewportAddY, -epos.theta, 1, 1, bigAddX, bigAddY)
+	setCanvas(canvas)
+	setShader(assets.shaders.erode.value)
+	draw(erosionCanvas)
 	setBlendMode("alpha", "alphamultiply")
 	setShader()
 	local reach = e:get(components.reach)
@@ -233,9 +239,11 @@ function see:draw(targetPlayer, canvas)
 		if not reach.updated then
 			updateReach(e)
 		end
+		setColour(1, 1, 1, 0.25)
 		local crosshairsWidth, crosshairsHeight = crosshairs.value:getDimensions()
 		draw(crosshairs.value, reach.dx - crosshairsWidth / 2, reach.dy - crosshairsHeight / 2, 0, 1, 1, -viewportAddX, -viewportAddY)
 	end
+	-- setColour(1, 1, 1)
 end
 
 return see

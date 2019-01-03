@@ -3,7 +3,7 @@ local components = require("components")
 return function(realm, viewer, viewee, minimumVisibility)
 	minimumVisibility = minimumVisibility or 0.03125
 	
-	local vieweeShape = viewee:get(components.solidShape).shape
+	local vieweeShape = viewee:has(components.solidShape) and viewee:get(components.solidShape).shape or viewee:has(components.door) and viewee:get(components.door).shape
 	local inSector = viewer:has(components.viewSector) and realm.collider:collisions(viewer:get(components.viewSector).shape)[vieweeShape]
 	local inCircle = viewer:has(components.viewSector) and realm.collider:collisions(viewer:get(components.viewSector).shape)[vieweeShape]
 	if not inSector and not inCircle then return false end
@@ -33,9 +33,9 @@ return function(realm, viewer, viewee, minimumVisibility)
 				if shape.bag then
 					local shape2 = shape2.bag.forRays or shape2
 					if shape2 ~= viewee and shape2:intersectsRay(cx, cy, eepos.x - cx, eepos.y - cy) then
-						local occInfo = not (shape2.bag.owner and shape2.bag.owner:get(components.mob)) and shape2.bag.occluderInfo
-						if occInfo then
-							r, g, b = math.min(r, occInfo.r), math.min(g, occInfo.g), math.min(b, occInfo.b)
+						local occluderInfo = not (shape2.bag.owner and shape2.bag.owner:get(components.mob)) and shape2.bag.occluderInfo
+						if occluderInfo then
+							r, g, b = math.min(r, occluderInfo.r * (1 - (occluderInfo.on and 1 or 0)) + (occluderInfo.on and 1 or 0)), math.min(g, occluderInfo.g * (1 - (occluderInfo.on and 1 or 0)) + (occluderInfo.on and 1 or 0)), math.min(b, occluderInfo.b * (1 - (occluderInfo.on and 1 or 0)) + (occluderInfo.on and 1 or 0))
 						end
 					end
 				end
@@ -67,12 +67,12 @@ return function(realm, viewer, viewee, minimumVisibility)
 	
 	for shape in pairs(toCheck3) do
 		if shape:intersectsRay(erpos.x, erpos.y, eepos.x - erpos.x, eepos.y - erpos.y) then
-			local occInfo = shape.bag and not (shape.bag.owner and shape.bag.owner:get(components.mob)) and shape.bag.occluderInfo
-			if occInfo then
-				viewR, viewG, viewB = math.min(viewR, occInfo.r), math.min(viewG, occInfo.g), math.min(viewB, occInfo.b)
+			local occluderInfo = shape.bag and not (shape.bag.owner and shape.bag.owner:get(components.mob)) and shape.bag.occluderInfo
+			if occluderInfo then
+				viewR, viewG, viewB = math.min(viewR, occluderInfo.r * (1 - (occluderInfo.on and 1 or 0)) + (occluderInfo.on and 1 or 0)), math.min(viewG, occluderInfo.g * (1 - (occluderInfo.on and 1 or 0)) + (occluderInfo.on and 1 or 0)), math.min(viewB, occluderInfo.b * (1 - (occluderInfo.on and 1 or 0)) + (occluderInfo.on and 1 or 0))
 			end
 		end
 	end
 	
-	return (lampR * viewR + lampG * viewG + lampB * viewB) / 3 * (vieweeShape.occluderInfo and (1 - (vieweeShape.occluderInfo.r + vieweeShape.occluderInfo.g + vieweeShape.occluderInfo.b) / 3) or 1) >= minimumVisibility
+	return (lampR * viewR + lampG * viewG + lampB * viewB) / 3 * (vieweeShape.occluderInfo and (1 - (vieweeShape.occluderInfo.r * (1 - (occluderInfo.on and 1 or 0)) + (occluderInfo.on and 1 or 0) + vieweeShape.occluderInfo.g * (1 - (occluderInfo.on and 1 or 0)) + (occluderInfo.on and 1 or 0) + vieweeShape.occluderInfo.b * (1 - (occluderInfo.on and 1 or 0)) + (occluderInfo.on and 1 or 0)) / 3) or 1) >= minimumVisibility
 end

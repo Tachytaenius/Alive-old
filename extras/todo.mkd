@@ -3,10 +3,10 @@
 	* If there's text, don't record the player's "progress" through the text. Let the replayer pause and see it themselves...?
 * Make a no-building-but-yes-moving-around zone around the world map at least as big as the biggest entity. Make it really slow to move in or something so that people aren't tempted to travel in it. Or maybe just scrap the idea.
 * Optimise draw with... batching?
-* Include light in "can see object" for both getSeenEntities and canSeeEntity (or whatever the new ECS version will be). use a "night vision" number
 * Stop drawing during times of intense processing. Discuss methods on Discord.
-* test lighting on more than just black/white
-* Stop sprite conflict flickering
-* Stop objects from getting passed betwen tiles during collision detection
+* Stop sprite conflict flickering (y height? distance from eyes? (sort))
+* Stop objects from getting passed betwen tiles during collision detection (raycast collisions :O)
 * Stop objects from tunelling through tiles during collision detection
 * Make util and const use init.lua like components and systems
+* Make a health graph in the HUD
+* Core width and height --> graphics

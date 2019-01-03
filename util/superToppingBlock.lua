@@ -32,10 +32,9 @@ function block:updateDrawFields()
 	self.noiseInfo[4] = 1
 	
 	local solidShape = self.owner.owner:get(components.solidShape)
-	local transparency = 1 - a / div
-	local r, g, b = r / div * transparency, g / div * transparency, b / div * transparency
 	solidShape.occluderInfo = solidShape.occluderInfo or {}
-	solidShape.occluderInfo.r, solidShape.occluderInfo.g, solidShape.occluderInfo.b = r, g, b
+	local occluderInfo = solidShape.occluderInfo
+	solidShape.occluderInfo.r, solidShape.occluderInfo.g, solidShape.occluderInfo.b, solidShape.occluderInfo.on = self.r * (1 - self.a), self.g * (1 - self.a), self.b * (1 - self.a), 1
 end
 
 function block.new(topping, category, rng)
@@ -60,19 +59,21 @@ function block.new(topping, category, rng)
 		total2 = total2 + quantity
 		constituents[material] = quantity
 	end
-	if total2 == 0 then print(total, total2, volume) end
 	new.constituents = constituents
 	new.total = total2
 	new.noiseInfo = {}
 	new.updateDrawFields = block.updateDrawFields
 	new.texture = assets.images.arrangements.base
+	new.colourInfo = {}
 	new:updateDrawFields()
 	new.owner.owner:get(components.solidShape).clip = true
 	return new
 end
 
 function block:destroy()
-	self.owner.owner:get(components.solidShape).clip = false
+	local solidShape = self.owner.owner:get(components.solidShape)
+	solidShape.clip = false
+	solidShape.occluderInfo = nil
 end
 
 return block

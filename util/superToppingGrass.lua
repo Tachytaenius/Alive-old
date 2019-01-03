@@ -20,7 +20,7 @@ function grass.new(owner)
 	local new = {}
 	new.owner = owner
 	local water = owner.constituents[materials.byName.water] / (core.terrainScale ^ 2 * core.ditchDepth)
-	new.health = water
+	new.health = math.min(water * 2, 1)
 	new.noiseInfo = {}
 	new.updateDrawFields = grass.updateDrawFields
 	new.texture = assets.images.arrangements.base

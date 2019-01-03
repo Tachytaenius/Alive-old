@@ -60,7 +60,6 @@ function ground.new(tile, category, rng)
 		total2 = total2 + quantity
 		constituents[material] = quantity
 	end
-	if total2 == 0 then print(total, total2, volume) end
 	new.constituents = constituents
 	new.total = total2
 	new.noiseInfo = {}

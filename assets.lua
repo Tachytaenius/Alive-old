@@ -3,9 +3,10 @@ local newArrangement, bricks = require("util.newArrangement"), require("util.bri
 local assets = {
 	shaders = {
 		depth = {load = function(self) self.value = love.graphics.newShader("resources/shaders/depth.glsl") end},
-		falloff = {load = function(self) self.value = love.graphics.newShader("resources/shaders/falloff.glsl") end},
 		light = {load = function(self) self.value = love.graphics.newShader("resources/shaders/light.glsl") end},
-		texture = {load = function(self) self.value = love.graphics.newShader("resources/shaders/texture.glsl") end}
+		texture = {load = function(self) self.value = love.graphics.newShader("resources/shaders/texture.glsl") end},
+		falloff = {load = function(self) self.value = love.graphics.newShader("resources/shaders/falloff.glsl") end},
+		erode = {load = function(self) self.value = love.graphics.newShader("resources/shaders/erode.glsl") end}
 	},
 	images = {
 		HUD = {

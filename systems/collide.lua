@@ -6,20 +6,25 @@ local updateShapes = require("util.updateShapes")
 
 function collide:update()
 	local collider = self:getInstance().collider
-	local relevantTiles = {}
+	local relevantTilesAndDoors = {}
 	local indices = {}
 	for i = 1, self.colliders.size do
 		local e = self.colliders:get(i)
 		for shape in pairs(collider:collisions(e:get(components.solidShape).shape)) do
 			local owner = shape.owner
 			if owner and not owner:has(components.mob) then
-				relevantTiles[shape] = true
+				local door = owner:get(components.door)
+				if door then
+					if door.shape == shape then relevantTilesAndDoors[shape] = true end
+				else
+					relevantTilesAndDoors[shape] = true
+				end
 			end
 		end
 		indices[e] = i
 	end
 	local xShifts, yShifts = {}, {}
-	for shape in pairs(relevantTiles) do
+	for shape in pairs(relevantTilesAndDoors) do
 		if shape.bag.clip then
 			for other, vector in pairs(collider:collisions(shape)) do
 				if other.owner and other.owner:has(components.mob) then

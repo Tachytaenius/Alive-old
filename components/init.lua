@@ -27,5 +27,6 @@ return {
 	metabolism = require(path .. "metabolism"),
 	rot = require(path .. "rot"),
 	life = require(path .. "life"),
-	HUD = require(path .. "HUD")
+	HUD = require(path .. "HUD"),
+	door = require(path .. "door")
 }

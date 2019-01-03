@@ -2,6 +2,7 @@ local play = require("play")
 local newRealm = require("util.newRealm")
 
 return function(seed, host, canvas)
+	seed = 1
 	local new = play()
 	new.seed = seed
 	new.rng = love.math.newRandomGenerator(seed)

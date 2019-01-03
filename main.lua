@@ -40,21 +40,6 @@ function love.update(dt)
 	if state and not state.paused then state:update() end
 end
 
---[[font specials:
-< = open quote
-> = close quote
-$ = interrobang
-{ = en dash
-} = em dash
-^ = degrees
-£ = currency
-# = exclamation comma
-@ = question comma
-~ = interrobang comma
-
-everything else is what it represents
-]] -- TODO: make function to process readable text into font-cooperative text
-
 function love.draw()
 	love.graphics.setFont(assets.images.misc.font.value)
 	if state and not state.paused then

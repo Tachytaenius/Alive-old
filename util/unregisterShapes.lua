@@ -14,4 +14,9 @@ return function(instance, e)
 	if light then
 		collider:remove(light.shape)
 	end
+	local door = e:get(components.door)
+	if door then
+		collider:remove(door.x)
+		collider:remove(door.y)
+	end
 end

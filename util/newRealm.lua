@@ -43,7 +43,7 @@ return function(theme, width, height, rng, length, time)
 			local newTile = behaviours.tile(concord.entity(), x, y, realm)
 			local topping = ground.new(newTile, materials.categories.loam, rng)
 			newTile:get(components.tile).topping = topping
-			if rng:random() < 0.01 then
+			if rng:random() < 0.05 then
 				topping.superTopping = block.new(topping, materials.categories.rock, rng)
 			else
 				topping:growGrass()
@@ -54,10 +54,10 @@ return function(theme, width, height, rng, length, time)
 	end
 	realm.tiles = tiles
 	
-	local temp = behaviours.maleHuman(concord.entity(), 1536, 1536, 0, realm)
+	local temp = behaviours.maleHuman(concord.entity(), 100 * core.terrainScale, 100 * core.terrainScale, 0, realm):give(components.camera, "aliveplayer"):apply()
 	temp:get(components.actor).player = "aliveplayer"
-	temp:give(components.camera, "aliveplayer"):apply()
-	realm
+	-- temp:give(components.light, 100, realm.collider, 1, 1, 1, temp, 0, 0)
+	return realm
 		:addSystem(systems.preact(), "update")
 		:addSystem(systems.clean(), "update")
 		:addSystem(systems.realmTransfers(), "update")
@@ -71,5 +71,6 @@ return function(theme, width, height, rng, length, time)
 		:addSystem(systems.see(), "draw")
 		:addSystem(systems.renderHUD(), "draw")
 		:addEntity(temp)
-	return realm
+		:addEntity(behaviours.maleHuman(concord.entity(), 100 * core.terrainScale, 100 * core.terrainScale, 0, realm))
+		:addEntity(behaviours.door(concord.entity(), 100, 100, 2, false, true, "x", realm.collider, nil, 0, 0, true))
 end
